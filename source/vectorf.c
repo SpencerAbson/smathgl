@@ -1,8 +1,5 @@
 #include <math.h>
 #include <assert.h>
-/* portable to all x86 compilers */
-#include <xmmintrin.h>
-#include <emmintrin.h>
 #include "..\include/vectors.h"
 
 
@@ -73,7 +70,7 @@ void vec_scale(float const *addr0, float scalar, float *out)
 }
 
 
-#ifndef _MSC_VER // if you use a good compiler
+#if ! defined( _MSC_VER) && SMGL_INSTRSET >= 3 // if you use a good compiler
 void vec_normalize(float const* addr, int size,  float *addr_out)
 {
     // Plenty of optimisation available here
@@ -89,6 +86,7 @@ void vec_normalize(float const* addr, int size,  float *addr_out)
     _mm_store_ps(addr_out, _mm_div_ps(input0, dividor));
 }
 #else
+
 void vec_normalize(float const* addr, int size, float* addr_out)
 {
     // Plenty of optimisation available here

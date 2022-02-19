@@ -1,13 +1,8 @@
 #ifndef SMATH_VECTORS_H_
 #define SMATH_VECTORS_H_
-#include <immintrin.h>
 #include <stdint.h>
-
-#if defined ( _MSC_VER )
-#define SMGL_ALIGN_16 __declspec(align(16))
-#elif defined( __GNUC__ )
-#define SMGL_ALIGN_16 __attribute__((aligned(16)))
-#endif
+#include <pmmintrin.h>
+#include "platform.h"
 
 #ifdef __cplusplus
 extern "C" {
