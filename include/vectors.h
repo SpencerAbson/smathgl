@@ -1,20 +1,29 @@
 #ifndef SMATH_VECTORS_H_
 #define SMATH_VECTORS_H_
-
 #include <immintrin.h>
 #include <stdint.h>
+
+#if defined ( _MSC_VER )
+#define SMGL_ALIGN_16 __declspec(align(16))
+#elif defined( __GNUC__ )
+#define SMGL_ALIGN_16 __attribute__((aligned(16)))
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* f32 composed vectors, aligned on 16 byte boundary for 128 bit SSE */
-typedef float vec2[2] __attribute__((aligned (16)));
-typedef float vec3[3] __attribute__((aligned (16)));
-typedef float vec4[4] __attribute__((aligned (16)));
+SMGL_ALIGN_16 typedef float vec2[2];
+SMGL_ALIGN_16 typedef float vec3[3];
+SMGL_ALIGN_16 typedef float vec4[4];
 
 /* i32 composed vectors, aligned on 16 byte boundary for 128 bit SSE */
-typedef int32_t ivec2[2] __attribute__((aligned (16)));
-typedef int32_t ivec3[3] __attribute__((aligned (16)));
-typedef int32_t ivec4[4] __attribute__((aligned (16)));
+SMGL_ALIGN_16 typedef int32_t ivec2[2];
+SMGL_ALIGN_16 typedef int32_t ivec3[3];
+SMGL_ALIGN_16 typedef int32_t ivec4[4];
 
 /* f32 composed vector functions */
-
 static inline __m128 vectorf128_reciporical(__m128 input)
 {
     __m128 numerator =_mm_set_ps1(1.0f);  // was not aware of __m128 _mm_rcp_ps (__m128 a)...
@@ -44,4 +53,8 @@ void ivec_cross(const ivec3 addr0, const ivec3 addr1, ivec3 addr_out); // calc c
 void ivec_normalize(float const *addr_in, int size, int32_t *addr_out); // normalize ivec2/3/4s and store in out
 void ivec_scale(int32_t const *addr_in, int32_t scalar, int32_t *out);
 float ivec_dot(int32_t const* addr0, int32_t const *addr1); // compute dot product of 2 ivec2/3/4s
-#endif // VECTORS_H_
+#ifdef __cplusplus
+}
+#endif
+
+#endif // SMATH_VECTORS_H_

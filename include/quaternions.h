@@ -1,5 +1,5 @@
-#ifndef QUATERNIONS_H_
-#define QUATERNIONS_H_
+#ifndef SMATH_QUATERNIONS_H_
+#define SMATH_QUATERNIONS_H_
 #include "vectors.h"
 #include "matrices.h"
 
