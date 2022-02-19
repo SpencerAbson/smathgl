@@ -73,6 +73,7 @@ void vec_scale(float const *addr0, float scalar, float *out)
 }
 
 
+#ifndef _MSC_VER // if you use a good compiler
 void vec_normalize(float const* addr, int size,  float *addr_out)
 {
     // Plenty of optimisation available here
@@ -87,7 +88,22 @@ void vec_normalize(float const* addr, int size,  float *addr_out)
 
     _mm_store_ps(addr_out, _mm_div_ps(input0, dividor));
 }
+#else
+void vec_normalize(float const* addr, int size, float* addr_out)
+{
+    // Plenty of optimisation available here
+    assert(size < 5 && size > 1);
+    float vec_sqr_sum = 0.0f;
+    for (int i = 0; i < size; i++)
+        vec_sqr_sum += powf(addr[i], 2);
 
+    float dividor = sqrtf(vec_sqr_sum);
+
+    for (int i = 0; i < size; i++)
+        addr_out[i] = addr[i] / dividor;
+
+}
+#endif
 
 float vsum(float const *a, int n)
 {

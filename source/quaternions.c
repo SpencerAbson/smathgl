@@ -4,7 +4,7 @@
 #include "..\include/matrices.h"
 
 
-static inline __m128 quatf_multiply(__m128 a, __m128 b) // credit to Agner Fog
+static inline __m128 quatf_multiply(__m128 a, __m128 b) // credit to Agner Fog https://github.com/vectorclass/add-on/blob/master/quaternion/quaternion.h
 {
     __m128 a1123 = _mm_shuffle_ps(a,a,0xE5);
     __m128 a2231 = _mm_shuffle_ps(a,a,0x7A);
