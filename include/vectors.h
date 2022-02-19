@@ -4,10 +4,6 @@
 #include <pmmintrin.h>
 #include "platform.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* f32 composed vectors, aligned on 16 byte boundary for 128 bit SSE */
 SMGL_ALIGN_16 typedef float vec2[2];
 SMGL_ALIGN_16 typedef float vec3[3];
@@ -48,8 +44,5 @@ void ivec_cross(const ivec3 addr0, const ivec3 addr1, ivec3 addr_out); // calc c
 void ivec_normalize(float const *addr_in, int size, int32_t *addr_out); // normalize ivec2/3/4s and store in out
 void ivec_scale(int32_t const *addr_in, int32_t scalar, int32_t *out);
 float ivec_dot(int32_t const* addr0, int32_t const *addr1); // compute dot product of 2 ivec2/3/4s
-#ifdef __cplusplus
-}
-#endif
 
 #endif // SMATH_VECTORS_H_
