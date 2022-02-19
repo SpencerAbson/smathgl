@@ -9,11 +9,6 @@
     #define M_PI 3.14159265358979323846
 #endif
 
-#if (defined(_M_AMD64) || defined(_M_X64) || defined(__amd64) ) && ! defined(__x86_64__)
-#define __x86_64__ 1
-#endif
-
-
 #define RADIANS(x) (x/180.0f * (float)M_PI)
 
 /* general use */
