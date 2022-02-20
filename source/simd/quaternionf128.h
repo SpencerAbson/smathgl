@@ -39,4 +39,21 @@ static inline __m128 quaternionf128_rotate(const quat q0, const vec3 axis, const
     return total;
 }
 
+
+static inline __m128 quaternionf128_pure_rotate(__m128 original, __m128 rotation)
+{
+    float angle, half_ang;
+    _mm_store_ss(&angle, rotation);
+    half_ang = angle / 2.0f;
+
+    __m128 temp           = _mm_set_ss(angle - 1.0f);  // so that we get 1.0, x, y, z when we do next line
+    __m128 local_rotation = _mm_sub_ps(rotation, temp);
+    __m128 transform      = _mm_set_ps(sinf(half_ang), sinf(half_ang), sinf(half_ang), cosf(half_ang));
+
+    local_rotation = _mm_mul_ps(local_rotation, transform);
+    original       = quaternionf128_mul(local_rotation, original);
+
+    return original;
+}
+
 #endif // QUATERNIONF128_H_

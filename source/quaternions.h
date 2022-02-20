@@ -1,7 +1,7 @@
 #ifndef SMATH_QUATERNIONS_H_
 #define SMATH_QUATERNIONS_H_
-#include "vectors.h"
-#include "matrices.h"
+#include "vectorf.h"
+#include "..\include/matrices.h"
 
 /* Quaternions are stored {w, x, y, z} as __m128 vectors (4 packed floats) */
 typedef vec4 quat; // Aligned on a 16 byte boundary

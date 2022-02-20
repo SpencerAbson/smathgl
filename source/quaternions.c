@@ -1,9 +1,9 @@
 #include <math.h>
-#include "..\include/quaternions.h"
-#include "..\include/vectors.h"
-#include "..\include/matrices.h"
+#include "quaternions.h"
+#include "vectorf.h"
+#include "simd/vectorf128.h"
 #include "simd/quaternionf128.h"
-
+#include "..\include/matrices.h"
 
 void quat_mul(const quat q0, const quat q1, quat out)
 {
@@ -53,5 +53,7 @@ void quat_rotation_set4x4(const quat q0, const vec3 axis, const float angle, mat
 
 void quat_rotate(const quat q0, const vec3 axis, const float angle, quat out) // gonna change
 {
-    _mm_store_ps(out, quaternionf128_rotate(q0, axis, angle));
+    __m128 q_of_rotation = _mm_set_ps(axis[2], axis[1], axis[0], angle); // w, x, y, z
+    __m128 original      = _mm_load_ps(q0);
+    _mm_store_ps(out, quaternionf128_pure_rotate(original, q_of_rotation));
 }

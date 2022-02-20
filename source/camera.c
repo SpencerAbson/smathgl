@@ -2,7 +2,7 @@
 #include <math.h>
 #include <string.h>
 #include "..\include/smathgl.h"
-#include "..\include/camera.h"
+#include "camera.h"
 
 
 void update_camera_vectors(SmCamera *self)
