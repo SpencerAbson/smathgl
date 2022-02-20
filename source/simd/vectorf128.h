@@ -20,12 +20,6 @@ static inline __m128 vectorf128_cross(__m128 input0, __m128 input1)
 }
 
 
-static inline __m128 vectorf128_reciporical(__m128 input)
-{
-    __m128 numerator =_mm_set_ps1(1.0f);  // was not aware of __m128 _mm_rcp_ps (__m128 a)...
-    return _mm_div_ps(numerator, input);
-}
-
 static inline __m128 vectorf128_sum(__m128 input)
 {
     input = _mm_hadd_ps(input, input);
@@ -42,28 +36,35 @@ static inline __m128 vectorf128_min(__m128 v)
 }
 
 
-static inline __m128 vectorf128_normalize(__m128 input)
-{
-    float divisor;
-    __m128 comps_squared = _mm_mul_ps(input, input);
-    __m128 square_sum    = vectorf128_sum(comps_squared);
-    _mm_store_ss(&divisor, square_sum);
-    divisor = sqrtf(divisor); // (a^2 + b^2 + c^2)^1/2
-    __m128 dividor       = _mm_load_ps1(&divisor);
-
-    return _mm_div_ps(input, dividor);
-}
-
-
 static inline float vectorf128_dot(__m128 input0, __m128 input1)
 {
     float out;
+#if SMGL_INSTRSET > 4
+    out = _mm_cvtss_f32(_mm_dp_ps(input0, input1, 0xff));
+#endif
     __m128 product = _mm_mul_ps(input0, input1);
     _mm_store_ss(&out, vectorf128_sum(product));
 
     return out;
 }
 
+
+static inline __m128 vectorf128_vector_dot(__m128 input0, __m128 input1)
+{
+#if SMGL_INSTRSET > 4
+    return _mm_dp_ps(input0, input1, 0xff);
+#endif
+    __m128 product = _mm_mul_ps(input0, input1);
+    return vectorf128_sum(product);
+}
+
+
+static inline __m128 vectorf128_normalize(__m128 input)
+{
+    __m128 dot = vectorf128_vector_dot(input, input);
+    __m128 isr = _mm_rsqrt_ps(dot);
+     return _mm_mul_ps(input, isr);
+}
 
 
 #endif // VECTORF128_H_
