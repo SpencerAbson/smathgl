@@ -22,6 +22,7 @@ void quat_div(const quat q0, const quat q1, quat out)
     _mm_store_ps(out, quaternionf128_mul(a, vectorf128_reciporical(b)));
 }
 
+
 void quat_rotation_set4x4(const quat q0, const vec3 axis, const float angle, mat4x4 out) // soon to be improved with intrins
 {
     quat q_of_rotation;
