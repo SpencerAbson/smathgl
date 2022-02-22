@@ -4,8 +4,6 @@
 #include "..\..\include/platform.h"
 #include "vectorf128.h"
 
-typedef __m128 mat4xm128[4];
-
 #if SMGL_INSTRSET > 2
 static inline __m128 mat4xm128_vec4_product(__m128 mat[4], __m128 vec)
 {
@@ -56,6 +54,82 @@ static inline void mat4xm128_sub(__m128 input0[4], __m128 input1[4], __m128 out[
     out[1] = _mm_sub_ps(input0[1], input1[1]);
     out[2] = _mm_sub_ps(input0[2], input1[2]);
     out[3] = _mm_sub_ps(input0[3], input1[3]);
+}
+
+
+static inline void mat4xm128_mul(__m128 input0[4], __m128 input1[4], __m128 out[4])
+{
+    {
+        __m128 e0 = _mm_shuffle_ps(input1[0], input1[0], _MM_SHUFFLE(0, 0, 0, 0));
+        __m128 e1 = _mm_shuffle_ps(input1[0], input1[0], _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 e2 = _mm_shuffle_ps(input1[0], input1[0], _MM_SHUFFLE(2, 2, 2, 2));
+        __m128 e3 = _mm_shuffle_ps(input1[0], input1[0], _MM_SHUFFLE(3, 3, 3, 3));
+
+        __m128 m0 = _mm_mul_ps(input0[0], e0);
+        __m128 m1 = _mm_mul_ps(input0[1], e1);
+        __m128 m2 = _mm_mul_ps(input0[2], e2);
+        __m128 m3 = _mm_mul_ps(input0[3], e3);
+
+        __m128 a0 = _mm_add_ps(m0, m1);
+        __m128 a1 = _mm_add_ps(m2, m3);
+        __m128 a2 = _mm_add_ps(a0, a1);
+
+        out[0] = a2;
+    }
+
+    {
+        __m128 e0 = _mm_shuffle_ps(input1[1], input1[1], _MM_SHUFFLE(0, 0, 0, 0));
+        __m128 e1 = _mm_shuffle_ps(input1[1], input1[1], _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 e2 = _mm_shuffle_ps(input1[1], input1[1], _MM_SHUFFLE(2, 2, 2, 2));
+        __m128 e3 = _mm_shuffle_ps(input1[1], input1[1], _MM_SHUFFLE(3, 3, 3, 3));
+
+        __m128 m0 = _mm_mul_ps(input0[0], e0);
+        __m128 m1 = _mm_mul_ps(input0[1], e1);
+        __m128 m2 = _mm_mul_ps(input0[2], e2);
+        __m128 m3 = _mm_mul_ps(input0[3], e3);
+
+        __m128 a0 = _mm_add_ps(m0, m1);
+        __m128 a1 = _mm_add_ps(m2, m3);
+        __m128 a2 = _mm_add_ps(a0, a1);
+
+        out[1] = a2;
+    }
+
+    {
+        __m128 e0 = _mm_shuffle_ps(input1[2], input1[2], _MM_SHUFFLE(0, 0, 0, 0));
+        __m128 e1 = _mm_shuffle_ps(input1[2], input1[2], _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 e2 = _mm_shuffle_ps(input1[2], input1[2], _MM_SHUFFLE(2, 2, 2, 2));
+        __m128 e3 = _mm_shuffle_ps(input1[2], input1[2], _MM_SHUFFLE(3, 3, 3, 3));
+
+        __m128 m0 = _mm_mul_ps(input0[0], e0);
+        __m128 m1 = _mm_mul_ps(input0[1], e1);
+        __m128 m2 = _mm_mul_ps(input0[2], e2);
+        __m128 m3 = _mm_mul_ps(input0[3], e3);
+
+        __m128 a0 = _mm_add_ps(m0, m1);
+        __m128 a1 = _mm_add_ps(m2, m3);
+        __m128 a2 = _mm_add_ps(a0, a1);
+
+        out[2] = a2;
+    }
+
+    {
+        __m128 e0 = _mm_shuffle_ps(input1[3], input1[3], _MM_SHUFFLE(0, 0, 0, 0));
+        __m128 e1 = _mm_shuffle_ps(input1[3], input1[3], _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 e2 = _mm_shuffle_ps(input1[3], input1[3], _MM_SHUFFLE(2, 2, 2, 2));
+        __m128 e3 = _mm_shuffle_ps(input1[3], input1[3], _MM_SHUFFLE(3, 3, 3, 3));
+
+        __m128 m0 = _mm_mul_ps(input0[0], e0);
+        __m128 m1 = _mm_mul_ps(input0[1], e1);
+        __m128 m2 = _mm_mul_ps(input0[2], e2);
+        __m128 m3 = _mm_mul_ps(input0[3], e3);
+
+        __m128 a0 = _mm_add_ps(m0, m1);
+        __m128 a1 = _mm_add_ps(m2, m3);
+        __m128 a2 = _mm_add_ps(a0, a1);
+
+        out[3] = a2;
+    }
 }
 
 #endif
