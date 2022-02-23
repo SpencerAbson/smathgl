@@ -23,19 +23,19 @@ float vec_dot(float const *addr0, float const *addr1)
 
 void vec_add(float const* addr0, float const* addr1, float *out)
 {
-    __m128 *input0 = (__m128 *)addr0;
-    __m128 *input1 = (__m128 *)addr1;
+    __m128 input0 = _mm_load_ps(addr0);
+    __m128 input1 = _mm_load_ps(addr1);
 
-    _mm_store_ps(out, _mm_add_ps(*input0, *input1));
+    _mm_store_ps(out, _mm_add_ps(input0, input1));
 }
 
 
 void vec_sub(float const* addr0, float const* addr1, float *out)
 {
-    __m128 *input0 = (__m128 *)addr0;
-    __m128 *input1 = (__m128 *)addr1;
+    __m128 input0 = _mm_load_ps(addr0);
+    __m128 input1 = _mm_load_ps(addr1);
 
-    _mm_store_ps(out, _mm_sub_ps(*input0, *input1));
+    _mm_store_ps(out, _mm_sub_ps(input0, input1));
 }
 
 
@@ -69,7 +69,7 @@ void vec_normalize(float const* addr, int size,  float *addr_out)
 
 void vec_normalize(float const* addr, int size, float* addr_out)
 {
-    // Plenty of optimisation available here
+    // this is... something
     assert(size < 5 && size > 1);
     float vec_sqr_sum = 0.0f;
     for (int i = 0; i < size; i++)

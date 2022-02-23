@@ -3,8 +3,7 @@
 #include "vectorf.h"
 #include "simd/vectorf128.h"
 #include "simd/quaternionf128.h"
-#include "..\include/matrices.h"
-
+#include "matrices.h"
 
 void quat_mul(const quat q0, const quat q1, quat out)
 {
@@ -57,5 +56,5 @@ void quat_div(const quat q0, const quat q1, quat out)
     __m128 a = _mm_load_ps(q0);
     __m128 b = _mm_load_ps(q1);
 
-    _mm_store_ps(out, quaternionf128_mul(a, vectorf128_reciporical(b)));
+    _mm_store_ps(out, quaternionf128_mul(a, _mm_rcp_ps(b)));
 }

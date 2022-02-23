@@ -2,7 +2,7 @@
 #define SMATH_CAMERA_H_
 #include <math.h>
 #include <stdbool.h>
-#include "..\include/matrices.h"
+#include "matrices.h"
 #include "vectorf.h"
 
 // camera defualts

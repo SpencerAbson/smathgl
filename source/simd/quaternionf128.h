@@ -4,6 +4,7 @@
 #include "..\..\include/platform.h"
 #include "..\quaternions.h"
 
+
 static inline __m128 quaternionf128_mul(__m128 a, __m128 b) // credit to Agner Fog https://github.com/vectorclass/add-on/blob/master/quaternion/quaternion.h
 {
     __m128 a1123 = _mm_shuffle_ps(a,a,0xE5);

@@ -10,7 +10,7 @@ void rotate4x4(mat4x4 mat_in, float angle, vec3 unit_vector, mat4x4 out)
     mat4x4 rotation_matrix;
     set_rotation4x4(rotation_matrix, angle, unit_vector);
 
-    mult4x4(mat_in, rotation_matrix, out);
+    mat4_mul(mat_in, rotation_matrix, out);
 }
 
 
@@ -98,7 +98,7 @@ void set_lookat(const vec3 pos, const vec3 target, const vec3 up, mat4x4 out)
     m2[3][1] = -pos[1];
     m2[3][2] = -pos[2];
 
-    mult4x4(m1, m2, out);
+    mat4_mul(m1, m2, out);
 }
 
 
@@ -107,5 +107,5 @@ void scale4x4(mat4x4 in, const vec3 scaler, mat4x4 out)
     mat4x4 scale_mat = {{scaler[0], 0, 0, 0}, {0, scaler[1], 0, 0},
                         {0, 0, scaler[2], 0}, {0, 0, 0, 1} };
 
-    mult4x4(in, scale_mat, out);
+    mat4_mul(in, scale_mat, out);
 }
