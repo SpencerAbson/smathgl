@@ -15,7 +15,7 @@
 #define SMGL_ALIGN_16 __attribute__((aligned(16)))
 #define SMGL_ALIGN_32 __attribute__((aligned(32)))
 #else
-#error "Unsupported compiler"
+#error "Unsupported compiler (smgl)"
 #endif
 
 /* selection of instruction set level */

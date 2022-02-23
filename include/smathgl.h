@@ -4,7 +4,7 @@
 #include <math.h>
 #include "..\source/vectorf.h"
 //#include "..\source/quaternions.h"
-#include "matrices.h"
+#include "..\source/matrices.h"
 
 #ifndef M_PI
     #define M_PI 3.14159265358979323846
