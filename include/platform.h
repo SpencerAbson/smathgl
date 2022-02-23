@@ -7,9 +7,11 @@
 
 /* floating point vectors must be aligned in 16 byte boundary for SIMD */
 #if defined( _MSC_VER )
+#define SMGL_FORCE_INLINE __forceinline
 #define SMGL_ALIGN_16 __declspec(align(16))
 #define SMGL_ALIGN_32 __declspec(align(32))
 #elif defined( __GNUC__ ) || defined (__clang__)
+#define SMGL_FORCE_INLINE __attribute__((always_inline))
 #define SMGL_ALIGN_16 __attribute__((aligned(16)))
 #define SMGL_ALIGN_32 __attribute__((aligned(32)))
 #else
