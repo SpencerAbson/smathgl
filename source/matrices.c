@@ -7,7 +7,7 @@
 #include "simd/matrix4xm128f.h"
 // I'm aware this is a mess
 
-void mat4_mul(mat4x4 mat_a, mat4x4 mat_b, mat4x4 out)
+void mat4_mul(const mat4x4 mat_a, const mat4x4 mat_b, mat4x4 out)
 {
     mat4xm128 a, b, c;
     for(uint32_t i = 0; i < 4; i++){
@@ -21,7 +21,7 @@ void mat4_mul(mat4x4 mat_a, mat4x4 mat_b, mat4x4 out)
 }
 
 
-void mat4_transpose(mat4x4 input, mat4x4 out)
+void mat4_transpose(const mat4x4 input, mat4x4 out)
 {
     mat4xm128 a0;
     mat4_load_to_m128(input, a0);
@@ -31,7 +31,7 @@ void mat4_transpose(mat4x4 input, mat4x4 out)
 }
 
 
-void mat4_add(mat4x4 mat_a, mat4x4 mat_b, mat4x4 out)
+void mat4_add(const mat4x4 mat_a, const mat4x4 mat_b, mat4x4 out)
 {
     mat4xm128 a0, a1, a2;
     mat4_load_to_m128(mat_a, a0);
@@ -42,7 +42,7 @@ void mat4_add(mat4x4 mat_a, mat4x4 mat_b, mat4x4 out)
 }
 
 
-void mat4_sub(mat4x4 mat_a, mat4x4 mat_b, mat4x4 out)
+void mat4_sub(const mat4x4 mat_a, const mat4x4 mat_b, mat4x4 out)
 {
     mat4xm128 a0, a1, a2;
     mat4_load_to_m128(mat_a, a0);
@@ -53,7 +53,7 @@ void mat4_sub(mat4x4 mat_a, mat4x4 mat_b, mat4x4 out)
 }
 
 
-void mat4_display(mat4x4 mat)
+void mat4_display(const mat4x4 mat)
 {
     for(uint32_t i = 0; i < 4; i++)
     {

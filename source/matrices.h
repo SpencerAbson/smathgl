@@ -6,11 +6,11 @@ SMGL_ALIGN_16 typedef float mat3x3[3][3];
 SMGL_ALIGN_16 typedef float mat4x4[4][4];
 typedef __m128 mat4xm128[4];
 
-void mat4_mul(mat4x4 mat_a, mat4x4 mat_b, mat4x4 out);
-void mat4_transpose(mat4x4 input, mat4x4 out);
-void mat4_sub(mat4x4 mat_a, mat4x4 mat_b, mat4x4 out);
-void mat4_add(mat4x4 mat_a, mat4x4 mat_b, mat4x4 out);
-void mat4_display(mat4x4 input);
+void mat4_mul(const mat4x4 mat_a, const mat4x4 mat_b, mat4x4 out);
+void mat4_transpose(const mat4x4 input, mat4x4 out);
+void mat4_sub(const mat4x4 mat_a, const mat4x4 mat_b, mat4x4 out);
+void mat4_add(const mat4x4 mat_a, const mat4x4 mat_b, mat4x4 out);
+void mat4_display(const mat4x4 input);
 
 inline void mat4_set_translation(mat4x4 out, const float translator)
 {
@@ -20,7 +20,7 @@ inline void mat4_set_translation(mat4x4 out, const float translator)
     out[3][3] = translator;
 }
 
-static inline void mat4_load_to_m128(mat4x4 input, mat4xm128 out)
+static inline void mat4_load_to_m128(const mat4x4 input, mat4xm128 out)
 {
     out[0] = _mm_load_ps(input[0]);
     out[1] = _mm_load_ps(input[1]);
@@ -28,7 +28,7 @@ static inline void mat4_load_to_m128(mat4x4 input, mat4xm128 out)
     out[3] = _mm_load_ps(input[3]);
 }
 
-static inline void m128_store_mat4(mat4xm128 input, mat4x4 out)
+static inline void m128_store_mat4(const mat4xm128 input, mat4x4 out)
 {
     _mm_store_ps(out[0], input[0]);
     _mm_store_ps(out[1], input[1]);

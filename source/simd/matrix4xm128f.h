@@ -5,7 +5,7 @@
 #include "vectorf128.h"
 
 #if SMGL_INSTRSET > 2
-static inline __m128 mat4xm128_vec4_product(__m128 mat[4], __m128 vec)
+static inline __m128 mat4xm128_vec4_product(const __m128 mat[4], __m128 vec)
 {
     float x = _mm_cvtss_f32(vectorf128_sum(_mm_mul_ps(mat[0], vec)));
     float y = _mm_cvtss_f32(vectorf128_sum(_mm_mul_ps(mat[1], vec)));
@@ -16,7 +16,7 @@ static inline __m128 mat4xm128_vec4_product(__m128 mat[4], __m128 vec)
 }
 
 
-static inline void mat4xm128_transpose(__m128 input[4], __m128 out[4])
+static inline void mat4xm128_transpose(const __m128 input[4], __m128 out[4])
 {
     __m128 tmp0 = _mm_shuffle_ps(input[0], input[1], 0x44);
     __m128 tmp2 = _mm_shuffle_ps(input[0], input[1], 0xEE);
@@ -30,7 +30,7 @@ static inline void mat4xm128_transpose(__m128 input[4], __m128 out[4])
 }
 
 
-static inline void mat4xm128_outer_product(__m128 input0, __m128 input1, __m128 out[4])
+static inline void mat4xm128_outer_product(const __m128 input0, const __m128 input1, __m128 out[4])
 {
     out[0] = _mm_mul_ps(input0, _mm_shuffle_ps(input1, input1, _MM_SHUFFLE(0, 0, 0, 0)));
     out[1] = _mm_mul_ps(input0, _mm_shuffle_ps(input1, input1, _MM_SHUFFLE(1, 1, 1, 1)));
@@ -39,7 +39,7 @@ static inline void mat4xm128_outer_product(__m128 input0, __m128 input1, __m128 
 }
 
 
-static inline void mat4xm128_add(__m128 input0[4], __m128 input1[4], __m128 out[4])
+static inline void mat4xm128_add(const __m128 input0[4], const __m128 input1[4], __m128 out[4])
 {
     out[0] = _mm_add_ps(input0[0], input1[0]);
     out[1] = _mm_add_ps(input0[1], input1[1]);
@@ -48,7 +48,7 @@ static inline void mat4xm128_add(__m128 input0[4], __m128 input1[4], __m128 out[
 }
 
 
-static inline void mat4xm128_sub(__m128 input0[4], __m128 input1[4], __m128 out[4])
+static inline void mat4xm128_sub(const __m128 input0[4], const __m128 input1[4], __m128 out[4])
 {
     out[0] = _mm_sub_ps(input0[0], input1[0]);
     out[1] = _mm_sub_ps(input0[1], input1[1]);
@@ -57,7 +57,7 @@ static inline void mat4xm128_sub(__m128 input0[4], __m128 input1[4], __m128 out[
 }
 
 
-static inline void mat4xm128_mul(__m128 input0[4], __m128 input1[4], __m128 out[4])
+static inline void mat4xm128_mul(const __m128 input0[4], const __m128 input1[4], __m128 out[4])
 {
     {
         __m128 e0 = _mm_shuffle_ps(input1[0], input1[0], _MM_SHUFFLE(0, 0, 0, 0));

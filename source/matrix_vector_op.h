@@ -5,7 +5,7 @@
 #include "simd/matrix4xm128f.h"
 #include "vectorf.h"
 
-inline static void vec4_outer_product(vec4 input0, vec4 input1, mat4x4 out)
+inline static void vec4_outer_product(const vec4 input0, const vec4 input1, mat4x4 out)
 {
     __m128 a0, a1;
     __m128 m0[4];
@@ -17,7 +17,7 @@ inline static void vec4_outer_product(vec4 input0, vec4 input1, mat4x4 out)
 }
 
 
-inline static void mat4_vec_product(mat4x4 mat, vec4 vec, vec4 out)
+inline static void mat4_vec_product(const mat4x4 mat, const vec4 vec, vec4 out)
 {
     __m128 v0;
     __m128 m0[4];
