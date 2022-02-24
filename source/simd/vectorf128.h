@@ -67,4 +67,11 @@ static inline __m128 vectorf128_normalize(__m128 input)
 }
 
 
+static inline __m128 vectorf128_scale(__m128 input, float scalar)
+{
+    __m128 scaling_vec = _mm_load_ps1(&scalar);
+    return _mm_mul_ps(input, scaling_vec);
+}
+
+
 #endif // VECTORF128_H_

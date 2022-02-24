@@ -60,7 +60,7 @@ static inline __m128 quaternionf128_pure_rotate(__m128 original, __m128 rotation
 
 static inline __m128 quaternionf128_inverse(__m128 input)
 {
-    __m128 conjugator = _mm_set_ps(-1.0f, -1.0f, -1.0f, 1.0f);
+    __m128 conjugator = _mm_set_ps(-1.0f, -1.0f, -1.0f, 1.0f); // q^-1 = q^* / |q|
     __m128 conjugated = _mm_mul_ps(input, conjugator); // negated vector component of quaternion
 
     __m128 square_norm = vectorf128_sum(_mm_mul_ps(input, input));
@@ -68,4 +68,26 @@ static inline __m128 quaternionf128_inverse(__m128 input)
     return _mm_div_ps(conjugated, square_norm);
 }
 
+
+static inline __m128 quaternionf128_slerp(__m128 input0, __m128 input1, float interp_param)
+{
+    // assuming both inputs are normalized
+    float theta, div;
+    float dot = vectorf128_dot(input0, input1);
+    __m128 mag0 = _mm_sqrt_ps(vectorf128_vector_dot(input0, input0)); // sqrt of dot prod of self (x*x + y*y..)^1/2
+    __m128 mag1 = _mm_sqrt_ps(vectorf128_vector_dot(input1, input1));
+
+    _mm_store_ss(&div, _mm_mul_ps(mag0, mag1));
+    theta = acosf(dot / div);
+
+    /*
+    ** Possible optimiations
+    ** - look back at final equation for sinf/cosf/acosf ops
+    */
+    float q0_scalar = sinf((1.0f - interp_param) * theta) / sinf(theta);
+    float q1_scalar = sinf(interp_param * theta) / sinf(theta);
+
+    return _mm_add_ps(vectorf128_scale(input0, q0_scalar), vectorf128_scale(input1, q1_scalar));
+
+}
 #endif // QUATERNIONF128_H_

@@ -65,3 +65,12 @@ void quat_inverse(const quat input, quat out)
     __m128 a = _mm_load_ps(input);
     _mm_store_ps(out, quaternionf128_inverse(a));
 }
+
+
+void quat_interpolate(const quat q0, const quat q1, float interp_param, quat out)
+{
+    __m128 a = _mm_load_ps(q0);
+    __m128 b = _mm_load_ps(q1);
+
+    _mm_store_ps(out, quaternionf128_slerp(a, b, interp_param));
+}
