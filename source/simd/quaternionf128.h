@@ -3,7 +3,7 @@
 #include <math.h>
 #include "..\..\include/platform.h"
 #include "..\quaternions.h"
-
+#include "vectorf128.h"
 
 static inline __m128 quaternionf128_mul(__m128 a, __m128 b) // credit to Agner Fog https://github.com/vectorclass/add-on/blob/master/quaternion/quaternion.h
 {
@@ -55,6 +55,17 @@ static inline __m128 quaternionf128_pure_rotate(__m128 original, __m128 rotation
     original       = quaternionf128_mul(local_rotation, original);
 
     return original;
+}
+
+
+static inline __m128 quaternionf128_inverse(__m128 input)
+{
+    __m128 conjugator = _mm_set_ps(-1.0f, -1.0f, -1.0f, 1.0f);
+    __m128 conjugated = _mm_mul_ps(input, conjugator); // negated vector component of quaternion
+
+    __m128 square_norm = vectorf128_sum(_mm_mul_ps(input, input));
+
+    return _mm_div_ps(conjugated, square_norm);
 }
 
 #endif // QUATERNIONF128_H_

@@ -58,3 +58,10 @@ void quat_div(const quat q0, const quat q1, quat out)
 
     _mm_store_ps(out, quaternionf128_mul(a, _mm_rcp_ps(b)));
 }
+
+
+void quat_inverse(const quat input, quat out)
+{
+    __m128 a = _mm_load_ps(input);
+    _mm_store_ps(out, quaternionf128_inverse(a));
+}
