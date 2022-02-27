@@ -1,4 +1,5 @@
 #include <math.h>
+#include <assert.h>
 #include "quaternions.h"
 #include "vectorf.h"
 #include "simd/vectorf128.h"
@@ -69,6 +70,7 @@ void quat_inverse(const quat input, quat out)
 
 void quat_interpolate(const quat q0, const quat q1, float interp_param, quat out)
 {
+    assert(interp_param > 0.0f && interp_param < 1.0f);
     __m128 a = _mm_load_ps(q0);
     __m128 b = _mm_load_ps(q1);
 

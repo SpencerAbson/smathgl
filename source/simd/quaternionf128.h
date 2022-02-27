@@ -84,4 +84,10 @@ static inline __m128 quaternionf128_slerp(__m128 input0, __m128 input1, float in
 }
 
 
+static inline __m128 quaternionf128_squad_interpolate(__m128 q0, __m128 q1, __m128 s0, __m128 s1, float t)
+{
+    // will pre-compute s values here in real-use so definition will likely become identical to slerp.
+    return quaternionf128_slerp(quaternionf128_slerp(q0, q1, t), quaternionf128_slerp(s0, s1, t), 2 * t * (1.0f - t));
+}
+
 #endif // QUATERNIONF128_H_
