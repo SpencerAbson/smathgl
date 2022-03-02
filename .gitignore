@@ -4,5 +4,6 @@
 tmp/
 *.exe
 .vs/
+build/
 CMakeLists.txt
 
