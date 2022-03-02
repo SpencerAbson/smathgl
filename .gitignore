@@ -5,4 +5,4 @@ tmp/
 *.exe
 .vs/
 CMakeLists.txt
-matrices.c
+
