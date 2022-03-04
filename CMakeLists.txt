@@ -4,11 +4,11 @@ project(smgl VERSION 1.0 DESCRIPTION "SIMD 3D Maths Library")
 
 add_library(
   smgl
-  source/vectorf.c
-  source/camera.c
-  source/smathgl.c
-  source/matrices.c
-  source/quaternions.c
+  source/smgl/vectorf.c
+  source/smgl/camera.c
+  source/smgl/smathgl.c
+  source/smgl/matrices.c
+  source/smgl/quaternions.c
   )
 
 
