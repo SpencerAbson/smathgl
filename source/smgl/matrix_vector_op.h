@@ -1,6 +1,6 @@
 #ifndef MATRIX_VECTOR_OP_H_
 #define MATRIX_VECTOR_OP_H_
-#include "..\include/platform.h"
+#include "..\..\include/platform.h"
 #include "matrices.h"
 #include "simd/matrix4xm128f.h"
 #include "vectorf.h"

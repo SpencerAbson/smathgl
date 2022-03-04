@@ -1,7 +1,7 @@
 #ifndef MATRIX4XM128F_H_
 #define MATRIX4XM128F_H_
 
-#include "..\..\include/platform.h"
+#include "..\..\..\include/platform.h"
 #include "vectorf128.h"
 
 #if SMGL_INSTRSET > 2

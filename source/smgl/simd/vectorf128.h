@@ -2,7 +2,7 @@
 #define VECTORF128_H_
 #include <pmmintrin.h>
 #include <math.h>
-#include "..\..\include/platform.h"
+#include "..\..\..\include/platform.h"
 
 
 static inline __m128 vectorf128_cross(__m128 input0, __m128 input1)

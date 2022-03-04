@@ -1,7 +1,7 @@
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "..\include/smathgl.h"
+#include "..\..\include/smathgl.h"
 
 
 

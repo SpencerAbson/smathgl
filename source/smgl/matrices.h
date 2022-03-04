@@ -1,7 +1,7 @@
 #ifndef SMGL_MATRICES_H_
 #define SMGL_MATRICES_H_
 #include <string.h>
-#include "..\include/platform.h"
+#include "..\..\include/platform.h"
 SMGL_ALIGN_16 typedef float mat3x3[3][3];
 SMGL_ALIGN_16 typedef float mat4x4[4][4];
 typedef __m128 mat4xm128[4];

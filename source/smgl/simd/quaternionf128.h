@@ -1,8 +1,8 @@
 #ifndef QUATERNIONF128_H_
 #define QUATERNIONF128_H_
 #include <math.h>
-#include "..\..\include/platform.h"
-#include "..\..\include/smathgl.h"
+#include "..\..\..\include/platform.h"
+#include "..\..\..\include/smathgl.h"
 #include "..\quaternions.h"
 #include "vectorf128.h"
 

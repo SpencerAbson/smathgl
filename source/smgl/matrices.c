@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "matrices.h"
-#include "..\include/platform.h"
 #include "simd/matrix4xm128f.h"
 // I'm aware this is a mess
 

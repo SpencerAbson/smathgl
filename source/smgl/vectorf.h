@@ -1,7 +1,7 @@
 #ifndef SMATH_VECTORS_H_
 #define SMATH_VECTORS_H_
 #include <stdint.h>
-#include "..\include/platform.h"
+#include "..\..\include/platform.h"
 
 /* f32 composed vectors, aligned on 16 byte boundary for 128 bit SSE */
 SMGL_ALIGN_16 typedef float vec2[2];
