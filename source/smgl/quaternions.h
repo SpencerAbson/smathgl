@@ -3,7 +3,7 @@
 #include "vectorf.h"
 #include "matrices.h"
 
-/* Quaternions are stored {w, x, y, z} as __m128 vectors (4 packed floats) */
+/* Quaternions are stored {w, i, j, k} as __m128 vectors (4 packed floats) */
 typedef vec4 quat; // Aligned on a 16 byte boundary
 
 void quat_mul(const quat q0, const quat q1, quat out);

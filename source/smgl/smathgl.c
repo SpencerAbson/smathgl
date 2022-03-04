@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "..\..\include/smathgl.h"
 
-
+// original functionality, slowly becoming deprecated
 
 void rotate4x4(mat4x4 mat_in, float angle, vec3 unit_vector, mat4x4 out)
 {
@@ -65,7 +65,6 @@ void set_lookat(const vec3 pos, const vec3 target, const vec3 up, mat4x4 out)
 
     vec_cross(cam_direction, cam_right, cam_up);
     vec_normalize(cam_up, 3, cam_up);
-    // if not try other way round like cmo
     mat4x4 m1, m2;
     m1[0][0] = cam_right[0];
     m1[1][0] = cam_right[1];
@@ -99,13 +98,4 @@ void set_lookat(const vec3 pos, const vec3 target, const vec3 up, mat4x4 out)
     m2[3][2] = -pos[2];
 
     mat4_mul(m1, m2, out);
-}
-
-
-void scale4x4(mat4x4 in, const vec3 scaler, mat4x4 out)
-{
-    mat4x4 scale_mat = {{scaler[0], 0, 0, 0}, {0, scaler[1], 0, 0},
-                        {0, 0, scaler[2], 0}, {0, 0, 0, 1} };
-
-    mat4_mul(in, scale_mat, out);
 }

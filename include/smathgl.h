@@ -14,8 +14,6 @@
 
 /* general use */
 void mult_point_matrix(const vec3 in, mat4x4 mat, vec3 out);
-void scale4x4(mat4x4 in, const vec3 scaler, mat4x4 out);
-
 /* Euler rotation  */
 void rotate4x4(mat4x4 in, float angle, vec3 unit_vector, mat4x4 out);
 void set_rotation4x4(mat4x4 in, float angle, vec3 unit_vector);
