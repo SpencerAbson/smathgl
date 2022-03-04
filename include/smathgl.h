@@ -2,9 +2,9 @@
 #define SMATHGL_H_
 
 #include <math.h>
-#include "..\source/vectorf.h"
+#include "..\source/smgl/vectorf.h"
 //#include "..\source/quaternions.h"
-#include "..\source/matrices.h"
+#include "..\source/smgl/matrices.h"
 
 #ifndef M_PI
     #define M_PI 3.14159265358979323846
