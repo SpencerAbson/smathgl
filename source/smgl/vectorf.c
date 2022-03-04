@@ -57,7 +57,7 @@ void vec_scale(float const *addr0, float scalar, float *out)
 }
 
 
-#if ! defined( _MSC_VER) && SMGL_INSTRSET >= 3 // if you use a good compiler
+#if ! SMGL_INSTRSET >= 3 // _mm_hadd_ps for > SEE 3
 void vec_normalize(float const* addr, int size,  float *addr_out)
 {
     assert(size < 5 && size > 1);
