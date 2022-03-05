@@ -28,8 +28,7 @@ inline static fvec mat4_vec_product(const mat4x4 mat, fvec *vec)
     output.size = vec->size;
     vec->data.sse_register = _mm_load_ps(vec->data.values);
     mat4_load_to_m128(mat, m0);
-
-    _mm_store_ps(output.data.values, mat4xm128_vec4_product(m0, vec->data.sse_register));
+    output.data.sse_register = mat4xm128_vec4_product(m0, vec->data.sse_register);
 
     return output;
 }

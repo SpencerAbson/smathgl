@@ -10,10 +10,7 @@
 quat quat_mul(quat* q0, quat* q1)
 {
     quat output;
-    q0->sse_register = _mm_load_ps(q0->values);
-    q1->sse_register = _mm_load_ps(q1->values);
-
-    _mm_store_ps(output.values, quaternionf128_mul(q0->sse_register, q1->sse_register));
+    output.sse_register = quaternionf128_mul(q0->sse_register, q1->sse_register);
     return output;
 }
 
@@ -25,17 +22,7 @@ quat quat_rotate(quat* q0, fvec* axis, const float angle)
                                       axis->data.values[0], angle); // w, x, y, z
     __m128 original      = _mm_load_ps(q0->values);
 
-    _mm_store_ps(output.values, quaternionf128_pure_rotate(original, q_of_rotation));
-    return output;
-}
-
-
-quat quat_inverse(quat* input)
-{
-    quat output;
-    input->sse_register = _mm_load_ps(input->values);
-    _mm_store_ps(output.values, quaternionf128_inverse(input->sse_register));
-
+    output.sse_register = quaternionf128_pure_rotate(original, q_of_rotation);
     return output;
 }
 
@@ -44,9 +31,7 @@ quat quat_interpolate(quat* q0, quat* q1, float interp_param)
 {
     assert(interp_param > 0.0f && interp_param < 1.0f);
     quat output;
-    q0->sse_register = _mm_load_ps(q0->values);
-    q1->sse_register = _mm_load_ps(q1->values);
-    _mm_store_ps(output.values, quaternionf128_slerp(q0->sse_register, q1->sse_register, interp_param));
+    output.sse_register = quaternionf128_slerp(q0->sse_register, q1->sse_register, interp_param);
 
     return output;
 }
@@ -78,4 +63,12 @@ void quat_rotate_set4x4(quat* q0, fvec* axis, const float angle, mat4x4 out)
     out[3][1] = 0.0f;
     out[3][2] = 0.0f;
     out[3][3] = 1.0f;
+}
+
+
+quat quat_inverse(quat* input)
+{
+    quat output;
+    output.sse_register = quaternionf128_inverse(input->sse_register);
+    return output;
 }

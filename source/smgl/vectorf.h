@@ -27,4 +27,29 @@ fvec  fvec_normalize(fvec *input); // normalize vec2/3/4s and store in out
 float vsum(float const *a, int size);
 
 
+inline fvec fvec4_init(float x, float y, float z, float w)
+{
+    fvec output;
+    output.size = 4;
+    output.data.sse_register = _mm_set_ps(w, z, y, x);
+    return output;
+}
+
+inline fvec fvec3_init(float x, float y, float z)
+{
+    fvec output;
+    output.size = 3;
+    output.data.sse_register = _mm_set_ps(0.0f, z, y, x);
+    return output;
+}
+
+
+inline fvec fvec2_init(float x, float y)
+{
+    fvec output;
+    output.size = 2;
+    output.data.sse_register = _mm_set_ps(0.0f, 0.0f, y, x);
+    return output;
+}
+
 #endif // SMATH_VECTORS_H_
