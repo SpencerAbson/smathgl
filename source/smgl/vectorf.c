@@ -3,7 +3,7 @@
 #include "vectorf.h"
 #include "simd/vectorf128.h"
 
-void vec_cross(const vec3 addr0, const vec3 addr1, vec3 addr_out)
+void vec_cross(float const *addr0, float const *addr1, float *addr_out)
 {
     __m128 input0 = _mm_load_ps(addr0);
     __m128 input1 = _mm_load_ps(addr1);
