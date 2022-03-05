@@ -4,7 +4,7 @@
 #include "..\..\include/platform.h"
 
 /* f32 composed vectors, aligned on 16 byte boundary for 128 bit SSE */
-typedef SMGL_ALIGN_16 float ivec4[4];
+typedef SMGL_ALIGN_16 float fvec4[4];
 union vec128f
 {
     SMGL_ALIGN_16 float values[4];
