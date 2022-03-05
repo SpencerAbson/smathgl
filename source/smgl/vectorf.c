@@ -8,9 +8,6 @@ fvec fvec_add(fvec *input0, fvec *input1)
 {
     fvec output;
     assert(input0->size == input1->size);
-    input0->data.sse_register = _mm_load_ps(input0->data.values);
-    input1->data.sse_register = _mm_load_ps(input1->data.values);
-
     output.size = input0->size;
     _mm_store_ps(output.data.values, _mm_add_ps(input0->data.sse_register,
                                                 input1->data.sse_register));
@@ -22,9 +19,6 @@ fvec fvec_sub(fvec *input0, fvec *input1)
 {
     fvec output;
     assert(input0->size == input1->size);
-    input0->data.sse_register = _mm_load_ps(input0->data.values);
-    input1->data.sse_register = _mm_load_ps(input1->data.values);
-
     output.size = input0->size;
     _mm_store_ps(output.data.values, _mm_sub_ps(input0->data.sse_register,
                                                 input1->data.sse_register));
@@ -36,9 +30,6 @@ fvec fvec_cross(fvec *input0, fvec *input1)
 {
     fvec output;
     assert(input0->size == input1->size && input1->size == 3);
-    input0->data.sse_register = _mm_load_ps(input0->data.values);
-    input1->data.sse_register = _mm_load_ps(input1->data.values);
-
     output.size = input0->size;
     _mm_store_ps(output.data.values, vectorf128_cross(input0->data.sse_register,
                                                     input1->data.sse_register));
@@ -50,9 +41,6 @@ fvec fvec_cross(fvec *input0, fvec *input1)
 float fvec_dot(fvec *input0, fvec *input1)
 {
     assert(input0->size == input1->size);
-    input0->data.sse_register = _mm_load_ps(input0->data.values);
-    input1->data.sse_register = _mm_load_ps(input1->data.values);
-
     return vectorf128_dot(input0->data.sse_register, input1->data.sse_register);
 }
 
@@ -61,9 +49,6 @@ fvec fvec_mul(fvec *input0, fvec *input1)
 {
     fvec output;
     assert(input0->size == input1->size && input1->size == 3);
-    input0->data.sse_register = _mm_load_ps(input0->data.values);
-    input1->data.sse_register = _mm_load_ps(input1->data.values);
-
     output.size = input0->size;
     _mm_store_ps(output.data.values, _mm_mul_ps(input0->data.sse_register,
                                                     input1->data.sse_register));
@@ -76,8 +61,6 @@ fvec fvec_scale(fvec *input, float scalar)
 {
     fvec output;
     __m128 scaling_vec = _mm_set_ps1(scalar);
-    input->data.sse_register = _mm_load_ps(input->data.values);
-
     output.size = input->size;
     _mm_store_ps(output.data.values, _mm_mul_ps(input->data.sse_register, scaling_vec));
 
@@ -91,9 +74,7 @@ fvec fvec_scale(fvec *input, float scalar)
 fvec fvec_normalize(fvec *input)
 {
     assert(input->size < 5 && input->size > 1);
-
     fvec output;
-    input->data.sse_register = _mm_load_ps(input->data.values);
     output.size = input->size;
     _mm_store_ps(output.data.values, vectorf128_normalize(input->data.sse_register));
     return output;
