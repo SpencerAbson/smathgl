@@ -3,14 +3,7 @@
 
 #include <math.h>
 #include "..\source/smgl/vectorf.h"
-//#include "..\source/quaternions.h"
 #include "..\source/smgl/matrices.h"
-
-#ifndef M_PI
-    #define M_PI 3.14159265358979323846
-#endif
-
-#define RADIANS(x) (x/180.0f * (float)M_PI)
 
 /* general use */
 fvec mult_point_matrix(fvec *in, mat4x4 mat);
