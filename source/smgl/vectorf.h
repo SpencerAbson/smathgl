@@ -4,18 +4,26 @@
 #include "..\..\include/platform.h"
 
 /* f32 composed vectors, aligned on 16 byte boundary for 128 bit SSE */
-//SMGL_ALIGN_16 typedef float vec2[2];
-//SMGL_ALIGN_16 typedef float vec3[4];
-SMGL_ALIGN_16 typedef float vec4[4];
+typedef SMGL_ALIGN_16 float ivec4[4];
+union vec128f
+{
+    SMGL_ALIGN_16 float values[4];
+    __m128 sse_register;
+}vec128f;
+
+typedef struct fvec {
+    union vec128f  data;
+    uint32_t size;
+}fvec;
 
 /* f32 composed vector functions */
-void vec_add(float const *addr0, float const *addr1, float *out); // add vec2/3/4s and store result in out
-void vec_sub(float const *addr0, float const *addr1, float *out); // subtract vec2/3/4s and stpre result in out
-void vec_mul(float const *addr0, float const *addr1, float *out);
-void vec_cross(float const *addr0, float const *addr1, float *addr_out); // calc cross product of a vec3
-void vec_normalize(float const *addr_in, int size, float *addr_out); // normalize vec2/3/4s and store in out
-void vec_scale(float const *addr_in, float scalar, float *out);
-float vec_dot(float const *addr0, float const *addr1); // compute dot product of 2 vec2/3/4s
+fvec  fvec_add(fvec *input0, fvec *inpu1); // add fvec2/3/4s and store result in dst
+fvec  fvec_cross(fvec *input0, fvec *input1); // calc cross product of a fvec3t
+float fvec_dot(fvec *input0, fvec *input1);  // compute dot product of 2 vec2/3/4s
+fvec  fvec_sub(fvec *input0, fvec *input1);  // subtract vec2/3/4s and stpre result in dst
+fvec  fvec_mul(fvec *input0, fvec *input1);
+fvec  fvec_scale(fvec *input, float scalar);
+fvec  fvec_normalize(fvec *input); // normalize vec2/3/4s and store in out
 float vsum(float const *a, int size);
 
 

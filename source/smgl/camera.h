@@ -24,11 +24,11 @@ DOWN
 
 typedef struct SmCamera_t
 {
-    vec3 position;
-    vec3 front;
-    vec3 right;
-    vec3 up;
-    vec3 world_up;
+    fvec position;
+    fvec front;
+    fvec right;
+    fvec up;
+    fvec world_up;
 
     float pitch;
     float yaw;
@@ -38,7 +38,7 @@ typedef struct SmCamera_t
 
 }SmCamera;
 
-SmCamera *cam_create(vec3 position, vec3 up, float yaw, float pitch);
+SmCamera *cam_create(fvec position, fvec up, float yaw, float pitch);
 void cam_process_keyboard(SmCamera *self, enum Sm_CameraDirection directiom, float delta_time);
 void cam_process_mouse(SmCamera *self, float x_offset, float y_offset, bool pitch_constraint);
 void cam_process_scroll(SmCamera *self, float y_offset);

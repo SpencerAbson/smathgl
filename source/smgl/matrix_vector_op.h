@@ -1,32 +1,37 @@
 #ifndef MATRIX_VECTOR_OP_H_
 #define MATRIX_VECTOR_OP_H_
+#include <assert.h>
 #include "..\..\include/platform.h"
 #include "matrices.h"
 #include "simd/matrix4xm128f.h"
 #include "vectorf.h"
 
-inline static void vec4_outer_product(const vec4 input0, const vec4 input1, mat4x4 out)
-{
-    __m128 a0, a1;
-    __m128 m0[4];
-    a0 = _mm_load_ps(input0);
-    a1 = _mm_load_ps(input1);
 
-    mat4xm128_outer_product(a0, a1, m0);
+
+inline static void vec4_outer_product(fvec *input0,  fvec *input1, mat4x4 out)
+{
+    assert(input0->size == input1->size && input0->size == 4);
+    __m128 m0[4];
+    input0->data.sse_register = _mm_load_ps(input0->data.values);
+    input1->data.sse_register = _mm_load_ps(input1->data.values);
+
+    mat4xm128_outer_product(input0->data.sse_register, input1->data.sse_register, m0);
     m128_store_mat4(m0, out);
 }
 
 
-inline static void mat4_vec_product(const mat4x4 mat, const vec4 vec, vec4 out)
+inline static fvec mat4_vec_product(const mat4x4 mat, fvec *vec)
 {
-    __m128 v0;
+    assert(vec->size == 4);
+    fvec output;
     __m128 m0[4];
-
-    v0 = _mm_load_ps(vec);
+    output.size = vec->size;
+    vec->data.sse_register = _mm_load_ps(vec->data.values);
     mat4_load_to_m128(mat, m0);
 
-    _mm_store_ps(out, mat4xm128_vec4_product(m0, v0));
-}
+    _mm_store_ps(output.data.values, mat4xm128_vec4_product(m0, vec->data.sse_register));
 
+    return output;
+}
 
 #endif // MATRIX_VECTOR_OP_H_

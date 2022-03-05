@@ -1,38 +1,41 @@
 #include <stdlib.h>
 #include <math.h>
+#include <assert.h>
 #include <string.h>
+#include "vectorf.h"
 #include "..\..\include/smathgl.h"
 #include "camera.h"
 
 
 void update_camera_vectors(SmCamera *self)
 {
-    vec3 new_front;
-    new_front[0] = cosf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch));
-    new_front[1] = sinf(RADIANS(self->pitch));
-    new_front[2] = sinf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)); // from sinf
+    fvec new_front;
+    new_front.data.values[0] = cosf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch));
+    new_front.data.values[1] = sinf(RADIANS(self->pitch));
+    new_front.data.values[2] = sinf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)); // from sinf
 
-    vec_normalize(new_front, 3, new_front);
-    memcpy(self->front, new_front, 3 * sizeof(float));
+    new_front   = fvec_normalize(&new_front);
+    self->front = new_front;
 
-    vec_cross(self->front, self->world_up, self->right);
-    vec_normalize(self->right, 3, self->right);
-    vec_cross(self->right, self->front, self->up);
-    vec_normalize(self->up, 3, self->up);
+    self->right = fvec_cross(&self->front, &self->world_up);
+    self->right = fvec_normalize(&self->right);
+    self->up    = fvec_cross(&self->right, &self->front);
+    self->up    = fvec_normalize(&self->up);
 }
 
 
-SmCamera *cam_create(vec3 position, vec3 up, float yaw, float pitch)
+SmCamera *cam_create(fvec position, fvec up, float yaw, float pitch)
 {
+    assert(position.size == 4 && up.size == 3);
     SmCamera *self = malloc(sizeof(SmCamera));
-    memcpy(self->position, position, sizeof(vec3));
-    memcpy(self->world_up, up, sizeof(vec3));
+    self->position = position;
+    self->up       = up;
     self->yaw      = yaw;
     self->pitch    = pitch;
 
-    self->front[0] = 0.0f;
-    self->front[1] = 0.0f;
-    self->front[2] = -1.0f;
+    self->front.data.values[0] = 0.0f;
+    self->front.data.values[1] = 0.0f;
+    self->front.data.values[2] = -1.0f;
     self->movement_speed    = CAM_DEFAULT_SPEED;
     self->mouse_sensitivity = CAM_DEFAULT_SENS;
     self->zoom              = CAM_DEFAULT_ZOOM;
@@ -45,38 +48,38 @@ SmCamera *cam_create(vec3 position, vec3 up, float yaw, float pitch)
 void cam_process_keyboard(SmCamera *self, enum Sm_CameraDirection direction, float delta_time)
 {
     float velocity = self->movement_speed * delta_time; // displacement ?
-    vec3 intermediate;
+    fvec intermediate;
 
     switch(direction)
     {
         case FORWARD:
-            vec_scale(self->front, velocity, intermediate);
-            vec_add(self->position, intermediate, self->position);
+            intermediate   = fvec_scale(&self->front, velocity);
+            self->position = fvec_add(&self->position, &intermediate);
             break;
 
         case BACKWARD:
-            vec_scale(self->front, velocity, intermediate);
-            vec_sub(self->position, intermediate, self->position);
+            intermediate   = fvec_scale(&self->front, velocity);
+            self->position = fvec_sub(&self->position, &intermediate);
             break;
 
         case LEFT:
-            vec_scale(self->right, velocity, intermediate);
-            vec_sub(self->position, intermediate, self->position);
+            intermediate   = fvec_scale(&self->right, velocity);
+            self->position = fvec_sub(&self->position, &intermediate);
             break;
 
         case RIGHT:
-            vec_scale(self->right, velocity, intermediate);
-            vec_add(self->position, intermediate, self->position);
+            intermediate   = fvec_scale(&self->right, velocity);
+            self->position = fvec_add(&self->position, &intermediate);
             break;
 
         case UP:
-            vec_scale(self->up, velocity, intermediate);
-            vec_add(self->position, intermediate, self->position);
+            intermediate   = fvec_scale(&self->up, velocity);
+            self->position = fvec_add(&self->position, &intermediate);
             break;
 
         case DOWN:
-            vec_scale(self->up, velocity, intermediate);
-            vec_sub(self->position, intermediate, self->position);
+            intermediate   = fvec_scale(&self->up, velocity);
+            self->position = fvec_sub(&self->position, &intermediate);
     }
 
 }
@@ -110,7 +113,7 @@ void cam_process_scroll(SmCamera *self, float y_offset)
 
 void cam_lookat(SmCamera *self, mat4x4 out)
 {
-    vec3 pos_front;
-    vec_add(self->position, self->front, pos_front);
-    set_lookat(self->position, pos_front, self->up, out);
+    fvec pos_front;
+    pos_front = fvec_add(&self->position, &self->front);
+    set_lookat(&self->position, &pos_front, &self->up, out);
 }

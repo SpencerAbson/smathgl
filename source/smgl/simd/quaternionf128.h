@@ -1,10 +1,12 @@
 #ifndef QUATERNIONF128_H_
 #define QUATERNIONF128_H_
 #include <math.h>
+#include <assert.h>
 #include "..\..\..\include/platform.h"
 #include "..\..\..\include/smathgl.h"
 #include "..\quaternions.h"
 #include "vectorf128.h"
+
 
 static inline __m128 quaternionf128_mul(__m128 a, __m128 b) // credit to Agner Fog https://github.com/vectorclass/add-on/blob/master/quaternion/quaternion.h
 {
@@ -28,11 +30,12 @@ static inline __m128 quaternionf128_mul(__m128 a, __m128 b) // credit to Agner F
 }
 
 
-static inline __m128 quaternionf128_rotate(const quat q0, const vec3 axis, const float angle)
+static inline __m128 quaternionf128_rotate(quat* q0, fvec *axis, const float angle)
 {
+    assert(axis->size == 3);
     float half_ang = angle / 2.0f;
-    __m128 total          = _mm_load_ps(q0);
-    __m128 local_rotation = _mm_set_ps(axis[2], axis[1], axis[0], 1.0f);
+    __m128 total          = _mm_load_ps(q0->values);
+    __m128 local_rotation = _mm_set_ps(axis->data.values[2], axis->data.values[1], axis->data.values[0], 1.0f);
     __m128 transform      = _mm_set_ps(sinf(half_ang), sinf(half_ang), sinf(half_ang), cosf(half_ang));
 
     local_rotation = _mm_mul_ps(local_rotation, transform);

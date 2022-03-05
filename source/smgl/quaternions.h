@@ -4,12 +4,14 @@
 #include "matrices.h"
 
 /* Quaternions are stored {w, i, j, k} as __m128 vectors (4 packed floats) */
-typedef vec4 quat; // Aligned on a 16 byte boundary
+//typedef SMGL_ALIGN_16 float quat[4]; // Aligned on a 16 byte boundary
+typedef union vec128f quat;
 
-void quat_mul(const quat q0, const quat q1, quat out);
-void quat_rotate(const quat q0, const vec3 axis, const float ang, quat out);
-void quat_rotation_set4x4(const quat q0, const vec3 axis, const float angle, mat4x4 out);
-void quat_inverse(const quat input, quat out);
-void quat_interpolate(const quat q0, const quat q1, float interp_param, quat out);
+quat quat_mul(quat* q0, quat* q1);
+quat quat_rotate(quat* q0, fvec* axis, const float angle);
+quat quat_inverse(quat* input);
+quat quat_interpolate(quat* q0, quat* q1, float interp_param);
+void quat_rotate_set4x4(quat* q0, fvec* axis, const float angle, mat4x4 out);
+
 
 #endif // QUATERNIONS_H_

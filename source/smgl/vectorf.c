@@ -3,82 +3,119 @@
 #include "vectorf.h"
 #include "simd/vectorf128.h"
 
-void vec_cross(float const *addr0, float const *addr1, float *addr_out)
-{
-    __m128 input0 = _mm_load_ps(addr0);
-    __m128 input1 = _mm_load_ps(addr1);
 
-    _mm_store_ps(addr_out, vectorf128_cross(input0, input1));
+fvec fvec_add(fvec *input0, fvec *input1)
+{
+    fvec output;
+    assert(input0->size == input1->size);
+    input0->data.sse_register = _mm_load_ps(input0->data.values);
+    input1->data.sse_register = _mm_load_ps(input1->data.values);
+
+    output.size = input0->size;
+    _mm_store_ps(output.data.values, _mm_add_ps(input0->data.sse_register,
+                                                input1->data.sse_register));
+    return output;
 }
 
 
-float vec_dot(float const *addr0, float const *addr1)
+fvec fvec_sub(fvec *input0, fvec *input1)
 {
-    __m128 input0 = _mm_load_ps(addr0);
-    __m128 input1 = _mm_load_ps(addr1);
+    fvec output;
+    assert(input0->size == input1->size);
+    input0->data.sse_register = _mm_load_ps(input0->data.values);
+    input1->data.sse_register = _mm_load_ps(input1->data.values);
 
-    return vectorf128_dot(input0, input1);
+    output.size = input0->size;
+    _mm_store_ps(output.data.values, _mm_sub_ps(input0->data.sse_register,
+                                                input1->data.sse_register));
+    return output;
 }
 
 
-void vec_add(float const* addr0, float const* addr1, float *out)
+fvec fvec_cross(fvec *input0, fvec *input1)
 {
-    __m128 input0 = _mm_load_ps(addr0);
-    __m128 input1 = _mm_load_ps(addr1);
+    fvec output;
+    assert(input0->size == input1->size && input1->size == 3);
+    input0->data.sse_register = _mm_load_ps(input0->data.values);
+    input1->data.sse_register = _mm_load_ps(input1->data.values);
 
-    _mm_store_ps(out, _mm_add_ps(input0, input1));
+    output.size = input0->size;
+    _mm_store_ps(output.data.values, vectorf128_cross(input0->data.sse_register,
+                                                    input1->data.sse_register));
+
+    return output;
 }
 
 
-void vec_sub(float const* addr0, float const* addr1, float *out)
+float fvec_dot(fvec *input0, fvec *input1)
 {
-    __m128 input0 = _mm_load_ps(addr0);
-    __m128 input1 = _mm_load_ps(addr1);
+    assert(input0->size == input1->size);
+    input0->data.sse_register = _mm_load_ps(input0->data.values);
+    input1->data.sse_register = _mm_load_ps(input1->data.values);
 
-    _mm_store_ps(out, _mm_sub_ps(input0, input1));
+    return vectorf128_dot(input0->data.sse_register, input1->data.sse_register);
 }
 
 
-void vec_mul(float const *addr0, float const *addr1, float *out)
+fvec fvec_mul(fvec *input0, fvec *input1)
 {
-    __m128 input0 = _mm_load_ps(addr0);
-    __m128 input1 = _mm_load_ps(addr1);
+    fvec output;
+    assert(input0->size == input1->size && input1->size == 3);
+    input0->data.sse_register = _mm_load_ps(input0->data.values);
+    input1->data.sse_register = _mm_load_ps(input1->data.values);
 
-    _mm_store_ps(out, _mm_mul_ps(input0, input1));
+    output.size = input0->size;
+    _mm_store_ps(output.data.values, _mm_mul_ps(input0->data.sse_register,
+                                                    input1->data.sse_register));
+
+    return output;
 }
 
 
-void vec_scale(float const *addr0, float scalar, float *out)
+fvec fvec_scale(fvec *input, float scalar)
 {
-    __m128 input = _mm_load_ps(addr0);
-    __m128 scaling_vec = _mm_load_ps1(&scalar);
+    fvec output;
+    __m128 scaling_vec = _mm_set_ps1(scalar);
+    input->data.sse_register = _mm_load_ps(input->data.values);
 
-    _mm_store_ps(out, _mm_mul_ps(input, scaling_vec));
+    output.size = input->size;
+    _mm_store_ps(output.data.values, _mm_mul_ps(input->data.sse_register, scaling_vec));
+
+    return output;
 }
+
 
 
 #if SMGL_INSTRSET >= 3 // _mm_hadd_ps for > SEE 3
-void vec_normalize(float const* addr, int size,  float *addr_out)
-{
-    assert(size < 5 && size > 1);
-    __m128 input = _mm_load_ps(addr);
 
-    _mm_store_ps(addr_out, vectorf128_normalize(input));
+fvec fvec_normalize(fvec *input)
+{
+    assert(input->size < 5 && input->size > 1);
+
+    fvec output;
+    input->data.sse_register = _mm_load_ps(input->data.values);
+    output.size = input->size;
+    _mm_store_ps(output.data.values, vectorf128_normalize(input->data.sse_register));
+    return output;
 }
+
 #else
 
-void vec_normalize(float const* addr, int size, float* addr_out)
+fvec fvec_normalize(fvec *input)
 {
     // this is... something
-    assert(size < 5 && size > 1);
+    assert(input->size < 5 && input->size > 1);
+    fvec out;
+    out.size = input->size;
     float vec_sqr_sum = 0.0f;
-    for (int i = 0; i < size; i++)
-        vec_sqr_sum += powf(addr[i], 2);
+    for (uint32_t i = 0; i < input->size; i++)
+        vec_sqr_sum += powf(input->data.values[i], 2);
 
     float dividor = sqrtf(vec_sqr_sum);
 
-    for (int i = 0; i < size; i++)
-        addr_out[i] = addr[i] / dividor;
+    for (uint32_t i = 0; i < input->size; i++)
+        out.data.values[i] = input->data.values[i] / dividor;
 
+    return out;
 }
 #endif
