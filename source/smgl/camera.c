@@ -9,14 +9,12 @@
 
 void update_camera_vectors(SmCamera *self)
 {
-    fvec new_front;
-    new_front.data.values[0] = cosf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch));
-    new_front.data.values[1] = sinf(RADIANS(self->pitch));
-    new_front.data.values[2] = sinf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)); // from sinf
+    fvec new_front=  fvec3_init(cosf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)),
+                              sinf(RADIANS(self->pitch)),
+                              sinf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)));
 
     new_front   = fvec_normalize(&new_front);
     self->front = new_front;
-
     self->right = fvec_cross(&self->front, &self->world_up);
     self->right = fvec_normalize(&self->right);
     self->up    = fvec_cross(&self->right, &self->front);
@@ -33,9 +31,7 @@ SmCamera *cam_create(fvec position, fvec up, float yaw, float pitch)
     self->yaw      = yaw;
     self->pitch    = pitch;
 
-    self->front.data.values[0] = 0.0f;
-    self->front.data.values[1] = 0.0f;
-    self->front.data.values[2] = -1.0f;
+    self->front = fvec3_init(0.0f, 0.0f, -1.0f);
     self->movement_speed    = CAM_DEFAULT_SPEED;
     self->mouse_sensitivity = CAM_DEFAULT_SENS;
     self->zoom              = CAM_DEFAULT_ZOOM;
