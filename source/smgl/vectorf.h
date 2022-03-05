@@ -5,7 +5,7 @@
 
 /* f32 composed vectors, aligned on 16 byte boundary for 128 bit SSE */
 typedef SMGL_ALIGN_16 float fvec4[4];
-union vec128f
+typedef union vec128f
 {
     SMGL_ALIGN_16 float values[4];
     __m128 sse_register;

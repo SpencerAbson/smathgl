@@ -2,7 +2,7 @@
 #include <math.h>
 #include <assert.h>
 #include <string.h>
-#include "vectorf.h"
+#include "..\..\include/platform.h"
 #include "..\..\include/smathgl.h"
 #include "camera.h"
 
