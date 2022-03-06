@@ -7,14 +7,13 @@
 #include "camera.h"
 
 
-void update_camera_vectors(SmCamera *self)
+static void update_camera_vectors(SmCamera *self)
 {
     fvec new_front = fvec3_init(cosf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)),
                               sinf(RADIANS(self->pitch)),
                               sinf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)));
 
-    new_front   = fvec_normalize(&new_front);
-    self->front = new_front;
+    self->front = fvec_normalize(&new_front);
     self->right = fvec_cross(&self->front, &self->world_up);
     self->right = fvec_normalize(&self->right);
     self->up    = fvec_cross(&self->right, &self->front);
@@ -24,10 +23,10 @@ void update_camera_vectors(SmCamera *self)
 
 SmCamera *cam_create(fvec position, fvec up, float yaw, float pitch)
 {
-    assert(position.size == 4 && up.size == 3);
+    assert(position.size == 3 && up.size == 3);
     SmCamera *self = malloc(sizeof(SmCamera));
     self->position = position;
-    self->up       = up;
+    self->world_up = up;
     self->yaw      = yaw;
     self->pitch    = pitch;
 
@@ -41,39 +40,39 @@ SmCamera *cam_create(fvec position, fvec up, float yaw, float pitch)
 }
 
 
-void cam_process_keyboard(SmCamera *self, enum Sm_CameraDirection direction, float delta_time)
+void cam_process_keyboard(SmCamera *self, enum SmCameraDirection direction, float delta_time)
 {
     float velocity = self->movement_speed * delta_time; // displacement ?
     fvec intermediate;
 
     switch(direction)
     {
-        case FORWARD:
+        case CAMDIR_FORWARD:
             intermediate   = fvec_scale(&self->front, velocity);
             self->position = fvec_add(&self->position, &intermediate);
             break;
 
-        case BACKWARD:
+        case CAMDIR_BACKWARD:
             intermediate   = fvec_scale(&self->front, velocity);
             self->position = fvec_sub(&self->position, &intermediate);
             break;
 
-        case LEFT:
+        case CAMDIR_LEFT:
             intermediate   = fvec_scale(&self->right, velocity);
             self->position = fvec_sub(&self->position, &intermediate);
             break;
 
-        case RIGHT:
+        case CAMDIR_RIGHT:
             intermediate   = fvec_scale(&self->right, velocity);
             self->position = fvec_add(&self->position, &intermediate);
             break;
 
-        case UP:
+        case CAMDIR_UP:
             intermediate   = fvec_scale(&self->up, velocity);
             self->position = fvec_add(&self->position, &intermediate);
             break;
 
-        case DOWN:
+        case CAMDIR_DOWN:
             intermediate   = fvec_scale(&self->up, velocity);
             self->position = fvec_sub(&self->position, &intermediate);
     }

@@ -12,14 +12,14 @@
 #define CAM_DEFAULT_SENS 0.1f
 #define CAM_DEFAULT_ZOOM 45.0f
 
-enum Sm_CameraDirection
+enum SmCameraDirection
 {
-FORWARD,
-BACKWARD,
-LEFT,
-RIGHT,
-UP,
-DOWN
+CAMDIR_FORWARD,
+CAMDIR_BACKWARD,
+CAMDIR_LEFT,
+CAMDIR_RIGHT,
+CAMDIR_UP,
+CAMDIR_DOWN
 }CameraDirection;
 
 typedef struct SmCamera_t
@@ -39,7 +39,7 @@ typedef struct SmCamera_t
 }SmCamera;
 
 SmCamera *cam_create(fvec position, fvec up, float yaw, float pitch);
-void cam_process_keyboard(SmCamera *self, enum Sm_CameraDirection directiom, float delta_time);
+void cam_process_keyboard(SmCamera *self, enum SmCameraDirection directiom, float delta_time);
 void cam_process_mouse(SmCamera *self, float x_offset, float y_offset, bool pitch_constraint);
 void cam_process_scroll(SmCamera *self, float y_offset);
 mat4x4 cam_lookat(SmCamera *self);

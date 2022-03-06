@@ -55,7 +55,7 @@ static inline __m128 quaternionf128_pure_rotate(__m128 original, __m128 rotation
     __m128 local_rotation = _mm_sub_ps(rotation, temp);
     __m128 transform      = _mm_set_ps(sinf(half_ang), sinf(half_ang), sinf(half_ang), cosf(half_ang));
 
-    local_rotation = _mm_mul_ps(local_rotation, transform);
+    local_rotation = _mm_mul_ps(local_rotation, transform); // q of rotation
     original       = quaternionf128_mul(local_rotation, original);
 
     return original;

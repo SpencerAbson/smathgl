@@ -17,12 +17,12 @@ quat quat_mul(quat* q0, quat* q1)
 
 quat quat_rotate(quat* q0, fvec* axis, const float angle)
 {
+    assert(axis->size == 3);
     quat output;
-    __m128 q_of_rotation = _mm_set_ps(axis->data.values[2], axis->data.values[1],
+    __m128 q_of_rotation = _mm_set_ps(axis->data.values[2], axis->data.values[1],  // replace with shuffle
                                       axis->data.values[0], angle); // w, x, y, z
-    __m128 original      = _mm_load_ps(q0->values);
 
-    output.sse_register = quaternionf128_pure_rotate(original, q_of_rotation);
+    output.sse_register = quaternionf128_pure_rotate(q0->sse_register, q_of_rotation);
     return output;
 }
 
