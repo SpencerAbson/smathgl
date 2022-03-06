@@ -9,7 +9,7 @@
 
 void update_camera_vectors(SmCamera *self)
 {
-    fvec new_front=  fvec3_init(cosf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)),
+    fvec new_front = fvec3_init(cosf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)),
                               sinf(RADIANS(self->pitch)),
                               sinf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)));
 
@@ -107,9 +107,9 @@ void cam_process_scroll(SmCamera *self, float y_offset)
 }
 
 
-void cam_lookat(SmCamera *self, mat4x4 out)
+mat4x4 cam_lookat(SmCamera *self)
 {
     fvec pos_front;
     pos_front = fvec_add(&self->position, &self->front);
-    set_lookat(&self->position, &pos_front, &self->up, out);
+    return mat4_lookat(&self->position, &pos_front, &self->up);
 }

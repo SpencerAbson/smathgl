@@ -5,11 +5,11 @@
 /* i32 composed vectors, aligned on 16 byte boundary for 128 bit SSE */
 SMGL_ALIGN_16 typedef int32_t ivec4[4];
 
-union vec128i
+typedef union vec128i
 {
     SMGL_ALIGN_16 int32_t values[4];
     __m128i sse_register;
-}vec128f;
+}vec128i;
 
 typedef struct ivec {
     union vec128i  data;

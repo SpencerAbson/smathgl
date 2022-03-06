@@ -37,9 +37,10 @@ quat quat_interpolate(quat* q0, quat* q1, float interp_param)
 }
 
 
-void quat_rotate_set4x4(quat* q0, fvec* axis, const float angle, mat4x4 out)
+mat4x4 quat_rotate_set4x4(quat* q0, fvec* axis, const float angle)
 {
     quat q_of_rotation;
+    mat4x4 out;
     float double_x_sqr, double_y_sqr, double_z_sqr;
 
     q_of_rotation = quat_rotate(q0, axis, angle);
@@ -47,22 +48,24 @@ void quat_rotate_set4x4(quat* q0, fvec* axis, const float angle, mat4x4 out)
     double_y_sqr = 2.0f * powf(q_of_rotation.values[2], 2);
     double_z_sqr = 2.0f * powf(q_of_rotation.values[3], 2);
 
-    out[0][0] = 1.0f - double_y_sqr - double_z_sqr; // 1-2y2-2z2
-    out[0][1] = (2.0f * q_of_rotation.values[1] * q_of_rotation.values[2]) - (2.0f * q_of_rotation.values[0] * q_of_rotation.values[3]);
-    out[0][2] = (2.0f * q_of_rotation.values[1] * q_of_rotation.values[3]) + (2.0f * q_of_rotation.values[0] * q_of_rotation.values[2]);
-    out[0][3] = 0.0f;
-    out[1][0] = (2.0f * q_of_rotation.values[1] * q_of_rotation.values[2]) + (2.0f * q_of_rotation.values[0] * q_of_rotation.values[3]);
-    out[1][1] = 1.0f - double_x_sqr - double_z_sqr;
-    out[1][2] = (2.0f * q_of_rotation.values[2] * q_of_rotation.values[3]) + (2.0f * q_of_rotation.values[0] * q_of_rotation.values[1]);
-    out[1][3] = 0.0f;
-    out[2][0] = (2.0f * q_of_rotation.values[1] * q_of_rotation.values[3]) - (2.0f * q_of_rotation.values[0] * q_of_rotation.values[2]);
-    out[2][1] = (2.0f * q_of_rotation.values[2] * q_of_rotation.values[3]) - (2.0f * q_of_rotation.values[0] * q_of_rotation.values[1]);
-    out[2][2] = 1.0f - double_x_sqr - double_y_sqr;
-    out[2][3] = 0.0f;
-    out[3][0] = 0.0f;
-    out[3][1] = 0.0f;
-    out[3][2] = 0.0f;
-    out[3][3] = 1.0f;
+    out.values[0][0] = 1.0f - double_y_sqr - double_z_sqr; // 1-2y2-2z2
+    out.values[0][1] = (2.0f * q_of_rotation.values[1] * q_of_rotation.values[2]) - (2.0f * q_of_rotation.values[0] * q_of_rotation.values[3]);
+    out.values[0][2] = (2.0f * q_of_rotation.values[1] * q_of_rotation.values[3]) + (2.0f * q_of_rotation.values[0] * q_of_rotation.values[2]);
+    out.values[0][3] = 0.0f;
+    out.values[1][0] = (2.0f * q_of_rotation.values[1] * q_of_rotation.values[2]) + (2.0f * q_of_rotation.values[0] * q_of_rotation.values[3]);
+    out.values[1][1] = 1.0f - double_x_sqr - double_z_sqr;
+    out.values[1][2] = (2.0f * q_of_rotation.values[2] * q_of_rotation.values[3]) + (2.0f * q_of_rotation.values[0] * q_of_rotation.values[1]);
+    out.values[1][3] = 0.0f;
+    out.values[2][0] = (2.0f * q_of_rotation.values[1] * q_of_rotation.values[3]) - (2.0f * q_of_rotation.values[0] * q_of_rotation.values[2]);
+    out.values[2][1] = (2.0f * q_of_rotation.values[2] * q_of_rotation.values[3]) - (2.0f * q_of_rotation.values[0] * q_of_rotation.values[1]);
+    out.values[2][2] = 1.0f - double_x_sqr - double_y_sqr;
+    out.values[2][3] = 0.0f;
+    out.values[3][0] = 0.0f;
+    out.values[3][1] = 0.0f;
+    out.values[3][2] = 0.0f;
+    out.values[3][3] = 1.0f;
+
+    return out;
 }
 
 

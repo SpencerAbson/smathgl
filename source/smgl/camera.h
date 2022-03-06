@@ -42,6 +42,6 @@ SmCamera *cam_create(fvec position, fvec up, float yaw, float pitch);
 void cam_process_keyboard(SmCamera *self, enum Sm_CameraDirection directiom, float delta_time);
 void cam_process_mouse(SmCamera *self, float x_offset, float y_offset, bool pitch_constraint);
 void cam_process_scroll(SmCamera *self, float y_offset);
-void cam_lookat(SmCamera *self, mat4x4 out);
+mat4x4 cam_lookat(SmCamera *self);
 
 #endif // CAMERA_H_

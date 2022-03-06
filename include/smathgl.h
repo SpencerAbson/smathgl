@@ -8,11 +8,11 @@
 /* general use */
 fvec mult_point_matrix(fvec *in, mat4x4 mat);
 /* Euler rotation  */
-void rotate4x4(mat4x4 in, float angle, fvec *unit_vector, mat4x4 out);
-void set_rotation4x4(mat4x4 in, float angle, fvec *unit_vector);
+extern mat4x4 mat4_rotate(const mat4x4 *in, float angle, fvec *unit_vector);
+extern mat4x4 mat4_rotation(float angle, fvec *unit_vector);
 
 /* lookat and perspective matrices  */
-void set_perspective(float angle_rad, float aspect_ratio, float near, float far, mat4x4 out);
-void set_lookat(fvec *position, fvec *target, fvec *up, mat4x4 out);
+extern mat4x4 mat4_perspective(float angle_rad, float aspect_ratio, float near, float far);
+extern mat4x4 mat4_lookat(fvec *position, fvec *target, fvec *up);
 
 #endif // SMATHGL_H_
