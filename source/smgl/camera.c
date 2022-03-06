@@ -7,7 +7,7 @@
 #include "camera.h"
 
 
-static void update_camera_vectors(SmCamera *self)
+static void sm_update_camera_vectors(SmCamera *self)
 {
     fvec new_front = fvec3_init(cosf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)),
                               sinf(RADIANS(self->pitch)),
@@ -21,7 +21,7 @@ static void update_camera_vectors(SmCamera *self)
 }
 
 
-SmCamera *cam_create(fvec position, fvec up, float yaw, float pitch)
+SmCamera *sm_cam_create(fvec position, fvec up, float yaw, float pitch)
 {
     assert(position.size == 3 && up.size == 3);
     SmCamera *self = malloc(sizeof(SmCamera));
@@ -35,12 +35,12 @@ SmCamera *cam_create(fvec position, fvec up, float yaw, float pitch)
     self->mouse_sensitivity = CAM_DEFAULT_SENS;
     self->zoom              = CAM_DEFAULT_ZOOM;
 
-    update_camera_vectors(self);
+    sm_update_camera_vectors(self);
     return self;
 }
 
 
-void cam_process_keyboard(SmCamera *self, enum SmCameraDirection direction, float delta_time)
+void sm_cam_process_keyboard(SmCamera *self, enum SmCameraDirection direction, float delta_time)
 {
     float velocity = self->movement_speed * delta_time; // displacement ?
     fvec intermediate;
@@ -80,7 +80,7 @@ void cam_process_keyboard(SmCamera *self, enum SmCameraDirection direction, floa
 }
 
 
-void cam_process_mouse(SmCamera *self, float x_offset, float y_offset, bool pitch_constraint)
+void sm_cam_process_mouse(SmCamera *self, float x_offset, float y_offset, bool pitch_constraint)
 {
     x_offset *= self->mouse_sensitivity;
     y_offset *= self->mouse_sensitivity;
@@ -94,11 +94,11 @@ void cam_process_mouse(SmCamera *self, float x_offset, float y_offset, bool pitc
         if(self->pitch < -89.0f) self->pitch = -89.0f;
     }
 
-    update_camera_vectors(self);
+    sm_update_camera_vectors(self);
 }
 
 
-void cam_process_scroll(SmCamera *self, float y_offset)
+void sm_cam_process_scroll(SmCamera *self, float y_offset)
 {
     self->zoom -= y_offset;
     if(self->zoom < 1.0f) self->zoom = 1.0f;
@@ -106,7 +106,7 @@ void cam_process_scroll(SmCamera *self, float y_offset)
 }
 
 
-mat4x4 cam_lookat(SmCamera *self)
+mat4x4 sm_cam_lookat(SmCamera *self)
 {
     fvec pos_front;
     pos_front = fvec_add(&self->position, &self->front);
