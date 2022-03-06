@@ -24,7 +24,6 @@ fvec  fvec_sub(fvec *input0, fvec *input1);  // subtract vec2/3/4s and stpre res
 fvec  fvec_mul(fvec *input0, fvec *input1);
 fvec  fvec_scale(fvec *input, float scalar);
 fvec  fvec_normalize(fvec *input); // normalize vec2/3/4s and store in out
-float vsum(float const *a, int size);
 
 
 inline fvec fvec4_init(float x, float y, float z, float w)

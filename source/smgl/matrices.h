@@ -12,6 +12,7 @@ void mat4_sub(const mat4x4 mat_a, const mat4x4 mat_b, mat4x4 out);
 void mat4_add(const mat4x4 mat_a, const mat4x4 mat_b, mat4x4 out);
 void mat4_display(const mat4x4 input);
 
+
 inline void mat4_set_translation(mat4x4 out, const float translator)
 {
     out[0][0] = translator;
