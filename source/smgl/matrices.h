@@ -15,6 +15,7 @@ extern mat4x4 mat4_sub(mat4x4 const *input0, mat4x4 const *input1);
 extern mat4x4 mat4_add(mat4x4 const *input0, mat4x4 const *input1);
 extern mat4x4 mat4_transpose(mat4x4 const *input);
 extern mat4x4 mat4_mul(mat4x4 const *input0, mat4x4 const *input1);
+extern void mat4_display(const mat4x4 *mat);
 
 inline mat4x4 mat4_init()
 {

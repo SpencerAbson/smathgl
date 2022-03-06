@@ -46,14 +46,14 @@ mat4x4 mat4_sub(mat4x4 const *input0, mat4x4 const *input1)
 }
 
 
-void mat4_display(const mat4x4 mat)
+void mat4_display(const mat4x4 *mat)
 {
     for(uint32_t i = 0; i < 4; i++)
     {
         printf("\n");
         for(uint32_t j = 0; j < 4; j++){
             if(i == 0 && j == 0) printf("[");
-            printf("%f ", mat.values[i][j]);
+            printf("%f ", mat->values[i][j]);
         }
         if(i == 3) printf("]");
     }

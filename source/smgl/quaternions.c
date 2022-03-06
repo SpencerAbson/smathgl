@@ -37,7 +37,7 @@ quat quat_interpolate(quat* q0, quat* q1, float interp_param)
 }
 
 
-mat4x4 quat_rotate_set4x4(quat* q0, fvec* axis, const float angle)
+mat4x4 quat_rotate_mat4(quat* q0, fvec* axis, const float angle)
 {
     quat q_of_rotation;
     mat4x4 out;
@@ -73,5 +73,13 @@ quat quat_inverse(quat* input)
 {
     quat output;
     output.sse_register = quaternionf128_inverse(input->sse_register);
+    return output;
+}
+
+
+quat quat_normalize(quat *input)
+{
+    quat output;
+    output.sse_register = vectorf128_normalize(input->sse_register);
     return output;
 }

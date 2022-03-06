@@ -10,6 +10,7 @@ extern quat quat_rotate(quat* q0, fvec* axis, const float angle);
 extern quat quat_inverse(quat* input);
 extern quat quat_interpolate(quat* q0, quat* q1, float interp_param);
 extern mat4x4 quat_rotate_mat4(quat* q0, fvec* axis, const float angle);
+extern quat quat_normalize(quat *input);
 
 inline quat quat_init(float w, float i, float j, float k)
 {
