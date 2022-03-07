@@ -17,11 +17,11 @@ typedef struct ivec {
 }ivec;
 
 /* i32 composed vector functions  */
-extern ivec ivec_add(ivec *input0, ivec *input1); // add ivec2/3/4s and store result in dst
-extern ivec ivec_sub(ivec *input0, ivec *input1); // subtract ivec2/3/4s and stpre result in dst
-extern ivec ivec_cross(ivec *input0, ivec *input1); // calc cross product of a vec3
-extern ivec ivec_scale(ivec *addr_in, int32_t scalar);
-extern ivec ivec_dot(ivec *input0, ivec *input1); // compute dot product of 2 ivec2/3/4s
+extern ivec ivec_add(ivec const *input0, ivec const *input1); // add ivec2/3/4s and store result in dst
+extern ivec ivec_sub(ivec const *input0, ivec const *input1); // subtract ivec2/3/4s and stpre result in dst
+extern ivec ivec_cross(ivec const *input0, ivec const *input1); // calc cross product of a vec3
+extern ivec ivec_scale(ivec const *addr_in, int32_t scalar);
+extern ivec ivec_dot(ivec const *input0, ivec const *input1); // compute dot product of 2 ivec2/3/4s
 
 inline ivec ivec4_init(int32_t x, int32_t y, int32_t z, int32_t w)
 {
