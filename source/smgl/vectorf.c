@@ -5,7 +5,7 @@
 #include "simd/vectorf128.h"
 
 
-fvec fvec_add(fvec *input0, fvec *input1)
+fvec fvec_add(fvec const *input0, fvec const *input1)
 {
     fvec output;
     assert(input0->size == input1->size);
@@ -16,7 +16,7 @@ fvec fvec_add(fvec *input0, fvec *input1)
 }
 
 
-fvec fvec_sub(fvec *input0, fvec *input1)
+fvec fvec_sub(fvec const *input0, fvec const *input1)
 {
     fvec output;
     assert(input0->size == input1->size);
@@ -27,7 +27,7 @@ fvec fvec_sub(fvec *input0, fvec *input1)
 }
 
 
-fvec fvec_cross(fvec *input0, fvec *input1)
+fvec fvec_cross(fvec const *input0, fvec const *input1)
 {
     fvec output;
     assert(input0->size == input1->size && input1->size == 3);
@@ -39,14 +39,14 @@ fvec fvec_cross(fvec *input0, fvec *input1)
 }
 
 
-float fvec_dot(fvec *input0, fvec *input1)
+float fvec_dot(fvec const *input0, fvec const *input1)
 {
     assert(input0->size == input1->size);
     return vectorf128_dot(input0->data.sse_register, input1->data.sse_register);
 }
 
 
-fvec fvec_mul(fvec *input0, fvec *input1)
+fvec fvec_mul(fvec const *input0, fvec const *input1)
 {
     fvec output;
     assert(input0->size == input1->size);
@@ -58,7 +58,7 @@ fvec fvec_mul(fvec *input0, fvec *input1)
 }
 
 
-fvec fvec_scale(fvec *input, float scalar)
+fvec fvec_scale(fvec const *input, float scalar)
 {
     fvec output;
     __m128 scaling_vec = _mm_set_ps1(scalar);
@@ -72,7 +72,7 @@ fvec fvec_scale(fvec *input, float scalar)
 
 #if SMGL_INSTRSET >= 3 // _mm_hadd_ps for > SEE 3
 
-fvec fvec_normalize(fvec *input)
+fvec fvec_normalize(fvec const *input)
 {
     assert(input->size < 5 && input->size > 1);
     fvec output;
@@ -83,7 +83,7 @@ fvec fvec_normalize(fvec *input)
 
 #else
 
-fvec fvec_normalize(fvec *input)
+fvec fvec_normalize(fvec const *input)
 {
     // this is... something
     assert(input->size < 5 && input->size > 1);

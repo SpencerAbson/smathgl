@@ -82,7 +82,6 @@ mat4x4 mat4_lookat(fvec *pos, fvec *target, fvec *up)
 
     m2 = mat4_init_translation(1.0f);
     m2.sse_registers[3] = _mm_set_ps(1.0f, -pos->data.values[2], -pos->data.values[1], -pos->data.values[0]);
-
     return mat4_mul(&m1, &m2);
 }
 
