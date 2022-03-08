@@ -69,9 +69,7 @@ fvec fvec_scale(fvec const *input, float scalar)
 }
 
 
-
 #if SMGL_INSTRSET >= 3 // _mm_hadd_ps for > SEE 3
-
 fvec fvec_normalize(fvec const *input)
 {
     assert(input->size < 5 && input->size > 1);
@@ -100,4 +98,33 @@ fvec fvec_normalize(fvec const *input)
 
     return out;
 }
+
 #endif
+
+
+/* Vector initlisers  */
+fvec fvec4_init(float x, float y, float z, float w)
+{
+    fvec output;
+    output.size = 4;
+    output.data.sse_register = _mm_set_ps(w, z, y, x);
+    return output;
+}
+
+
+fvec fvec3_init(float x, float y, float z)
+{
+    fvec output;
+    output.size = 3;
+    output.data.sse_register = _mm_set_ps(0.0f, z, y, x);
+    return output;
+}
+
+
+fvec fvec2_init(float x, float y)
+{
+    fvec output;
+    output.size = 2;
+    output.data.sse_register = _mm_set_ps(0.0f, 0.0f, y, x);
+    return output;
+}

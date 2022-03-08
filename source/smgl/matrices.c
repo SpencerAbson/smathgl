@@ -4,11 +4,31 @@
 #include <stdlib.h>
 #include "matrices.h"
 #include "simd/matrix4xm128f.h"
+// worst code in this project, not shippable version:
 
-/* Larger functions are inlined into these more tedious wrappers,
- * seperation of implementation layer to simd layer was doine to allow
- * simd types direct access to functions + more, but does make this look stupuid.
- * (we can't inline due to static) */
+
+mat4x4 mat4_init_translation(const float translator)
+{
+    mat4x4 output;
+    output.sse_registers[0] = _mm_set_ps(0.0f, 0.0f, 0.0f, translator);
+    output.sse_registers[1] = _mm_set_ps(0.0f, 0.0f, translator, 0.0f);
+    output.sse_registers[2] = _mm_set_ps(0.0f, translator, 0.0f, 0.0f);
+    output.sse_registers[3] = _mm_set_ps(translator, 0.0f, 0.0f, 0.0f);
+
+    return output;
+}
+
+
+mat4x4 mat4_init()
+{
+    mat4x4 output;
+    output.sse_registers[0] = _mm_set_ps1(0.0f);
+    output.sse_registers[1] = _mm_set_ps1(0.0f);
+    output.sse_registers[2] = _mm_set_ps1(0.0f);
+    output.sse_registers[3] = _mm_set_ps1(0.0f);
+
+    return output;
+}
 
 
 mat4x4 mat4_mul(mat4x4 const *input0, mat4x4 const *input1)

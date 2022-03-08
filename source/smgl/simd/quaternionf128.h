@@ -93,4 +93,5 @@ static inline __m128 quaternionf128_squad_interpolate(__m128 q0, __m128 q1, __m1
     return quaternionf128_slerp(quaternionf128_slerp(q0, q1, t), quaternionf128_slerp(s0, s1, t), 2 * t * (1.0f - t));
 }
 
+
 #endif // QUATERNIONF128_H_
