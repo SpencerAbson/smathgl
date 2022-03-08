@@ -25,30 +25,9 @@ extern fvec  fvec_mul(fvec const *input0, fvec const *input1);
 extern fvec  fvec_scale(fvec const *input, float scalar);
 extern fvec  fvec_normalize(fvec const*input); // normalize vec2/3/4s and store in out
 
-
-inline fvec fvec4_init(float x, float y, float z, float w)
-{
-    fvec output;
-    output.size = 4;
-    output.data.sse_register = _mm_set_ps(w, z, y, x);
-    return output;
-}
-
-inline fvec fvec3_init(float x, float y, float z)
-{
-    fvec output;
-    output.size = 3;
-    output.data.sse_register = _mm_set_ps(0.0f, z, y, x);
-    return output;
-}
-
-
-inline fvec fvec2_init(float x, float y)
-{
-    fvec output;
-    output.size = 2;
-    output.data.sse_register = _mm_set_ps(0.0f, 0.0f, y, x);
-    return output;
-}
+/* vector initers, will zero out unused components. */
+extern fvec fvec4_init(float x, float y, float z, float w);
+extern fvec fvec3_init(float x, float y, float z);
+extern fvec fvec2_init(float x, float y);
 
 #endif // SMATH_VECTORF_H_

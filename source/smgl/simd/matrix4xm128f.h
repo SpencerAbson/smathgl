@@ -5,6 +5,7 @@
 #include "vectorf128.h"
 
 #if SMGL_INSTRSET > 2
+
 static inline __m128 mat4xm128_vec4_product(const __m128 mat[4], __m128 vec)
 {
     float x = _mm_cvtss_f32(vectorf128_sum(_mm_mul_ps(mat[0], vec)));
@@ -39,7 +40,7 @@ static inline void mat4xm128_outer_product(const __m128 input0, const __m128 inp
 }
 
 
-inline void mat4xm128_add(const __m128 input0[4], const __m128 input1[4], __m128 out[4])
+static inline void mat4xm128_add(const __m128 input0[4], const __m128 input1[4], __m128 out[4])
 {
     out[0] = _mm_add_ps(input0[0], input1[0]);
     out[1] = _mm_add_ps(input0[1], input1[1]);
@@ -48,7 +49,7 @@ inline void mat4xm128_add(const __m128 input0[4], const __m128 input1[4], __m128
 }
 
 
-inline void mat4xm128_sub(const __m128 input0[4], const __m128 input1[4], __m128 out[4])
+static inline void mat4xm128_sub(const __m128 input0[4], const __m128 input1[4], __m128 out[4])
 {
     out[0] = _mm_sub_ps(input0[0], input1[0]);
     out[1] = _mm_sub_ps(input0[1], input1[1]);
@@ -131,6 +132,7 @@ static inline void mat4xm128_mul(const __m128 input0[4], const __m128 input1[4],
         out[3] = a2;
     }
 }
+
 
 #endif
 #endif // MATRIX4XM128F_H_
