@@ -39,7 +39,7 @@ static inline void mat4xm128_outer_product(const __m128 input0, const __m128 inp
 }
 
 
-static inline void mat4xm128_add(const __m128 input0[4], const __m128 input1[4], __m128 out[4])
+inline void mat4xm128_add(const __m128 input0[4], const __m128 input1[4], __m128 out[4])
 {
     out[0] = _mm_add_ps(input0[0], input1[0]);
     out[1] = _mm_add_ps(input0[1], input1[1]);
@@ -48,7 +48,7 @@ static inline void mat4xm128_add(const __m128 input0[4], const __m128 input1[4],
 }
 
 
-static inline void mat4xm128_sub(const __m128 input0[4], const __m128 input1[4], __m128 out[4])
+inline void mat4xm128_sub(const __m128 input0[4], const __m128 input1[4], __m128 out[4])
 {
     out[0] = _mm_sub_ps(input0[0], input1[0]);
     out[1] = _mm_sub_ps(input0[1], input1[1]);

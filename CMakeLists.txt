@@ -6,7 +6,7 @@ add_library(
   smgl
   source/smgl/vectorf.c
   source/smgl/camera.c
-  source/smgl/smathgl.c
+  source/smgl/matrix_vector_op.c
   source/smgl/matrices.c
   source/smgl/quaternions.c
   )
