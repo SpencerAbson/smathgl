@@ -4,9 +4,9 @@
 #include "quaternions.h"
 
 
-mat4x4 mat4_perspective(float angle_rad, float aspect_ratio, float near, float far)
+mat4x4 mat4_perspective(float angle_rad, float aspect_ratio, float near, float far) // generate view perspective matrix
 {
-    mat4x4 out = mat4_init();
+    mat4x4 out;  // no need to init as all regs are due to be set
     float tan_half_fov = tanf(angle_rad / 2.0f);
     out.sse_registers[0] = _mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f / (aspect_ratio * tan_half_fov));
     out.sse_registers[1] = _mm_set_ps(0.0f, 0.0f, 1.0f / tan_half_fov, 0.0f);
