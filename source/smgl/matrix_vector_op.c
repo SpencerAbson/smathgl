@@ -50,6 +50,7 @@ mat4x4 mat4_rotate(mat4x4 const *input, fvec const* axis, float angle_rad)
     return mat4_mul(input, &rotator);
 }
 
+
 mat4x4 vec4_outer_product(fvec *input0,  fvec *input1)
 {
     assert(input0->size == input1->size && input0->size == 4);
@@ -71,6 +72,38 @@ fvec mat4_vec_product(mat4x4 const *mat, fvec *vec)
     return output;
 }
 
+
+mat4x4 mat4_euler_rotation(float angle, fvec *unit_vector) // note angle in radians
+{
+    mat4x4 rotation_matrix;
+    assert(unit_vector->size == 3);
+    const float cos_a = cosf(angle);
+    const float sin_a = sinf(angle);
+    const float cos_a_n_1 = 1.0f - cos_a;
+    const float u_x2 = powf(unit_vector->data.values[0], 2);
+    const float u_y2 = powf(unit_vector->data.values[1], 2);
+    const float u_z2 = powf(unit_vector->data.values[2], 2);
+
+    // Euler rotation matrix
+    rotation_matrix.values[0][0] = cos_a + (u_x2 * (1 - cos_a));
+    rotation_matrix.values[1][0] = (unit_vector->data.values[0] * unit_vector->data.values[1] * cos_a_n_1) - (unit_vector->data.values[2] * sin_a);
+    rotation_matrix.values[2][0] = (unit_vector->data.values[0] * unit_vector->data.values[2] * cos_a_n_1) + (unit_vector->data.values[1] * sin_a);
+    rotation_matrix.values[0][3] = 0.0f;
+    rotation_matrix.values[0][1] = (unit_vector->data.values[0] * unit_vector->data.values[1] * cos_a_n_1) + (unit_vector->data.values[2] * sin_a);
+    rotation_matrix.values[1][1] = cos_a + (u_y2 * (cos_a_n_1));
+    rotation_matrix.values[2][1] = (unit_vector->data.values[1] * unit_vector->data.values[2] * cos_a_n_1) - (unit_vector->data.values[0] * sin_a);
+    rotation_matrix.values[1][3] = 0.0f;
+    rotation_matrix.values[0][2] = (unit_vector->data.values[2] * unit_vector->data.values[0] * cos_a_n_1) - (unit_vector->data.values[1] * sin_a);
+    rotation_matrix.values[1][2] = (unit_vector->data.values[2] * unit_vector->data.values[1] * cos_a_n_1) + (unit_vector->data.values[0] * sin_a);
+    rotation_matrix.values[2][2] = cos_a + (u_z2 * (cos_a_n_1));
+    rotation_matrix.values[2][3] = 0.0f;
+    rotation_matrix.values[3][0] = 0.0f;
+    rotation_matrix.values[3][1] = 0.0f;
+    rotation_matrix.values[3][2] = 0.0f;
+    rotation_matrix.values[3][3] = 1.0f;
+
+    return rotation_matrix;
+}
 
 /*
 **    out.values[0][0] = 1 / (aspect_ratio * tan_half_fov);
