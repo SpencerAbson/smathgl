@@ -39,7 +39,7 @@ mat4x4 mat4_rotation(float angle, fvec *unit_vector) // note angle in radians
     return rotation_matrix;
 }
 
-
+/*
 mat4x4 mat4_rotate(mat4x4 const *mat_in, float angle, fvec *unit_vector)
 {
     assert(unit_vector->size == 3);
@@ -84,7 +84,7 @@ mat4x4 mat4_lookat(fvec *pos, fvec *target, fvec *up)
     m2.sse_registers[3] = _mm_set_ps(1.0f, -pos->data.values[2], -pos->data.values[1], -pos->data.values[0]);
     return mat4_mul(&m1, &m2);
 }
-
+*/
 
     /*m1[0][0] = cam_right.data.values[0];
     m1[1][0] = cam_right.data.values[1];

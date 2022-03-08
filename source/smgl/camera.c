@@ -4,7 +4,10 @@
 #include <string.h>
 #include "..\..\include/platform.h"
 #include "..\..\include/smathgl.h"
+#include "matrix_vector_op.h"
 #include "camera.h"
+
+/* Example of how one might implement an FPS camera using the basics of the lib. */
 
 
 static void sm_update_camera_vectors(SmCamera *self)

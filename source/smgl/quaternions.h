@@ -19,4 +19,5 @@ inline quat quat_init(float w, float i, float j, float k)
     return output;
 }
 
+
 #endif // QUATERNIONS_H_
