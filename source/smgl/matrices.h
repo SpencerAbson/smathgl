@@ -1,5 +1,5 @@
-#ifndef SMGL_MATRICES_H_
-#define SMGL_MATRICES_H_
+#ifndef SMATH_MATRICES_H_
+#define SMATH_MATRICES_H_
 #include <string.h>
 #include "..\..\include/platform.h"
 
@@ -43,4 +43,4 @@ inline void mat4_clear(mat4x4 input){
     memset(input.values, 0, sizeof(float) * 16);
 }
 
-#endif // SMGL_MATRICES_H_
+#endif // SMATH_MATRICES_H_

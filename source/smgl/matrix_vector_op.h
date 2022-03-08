@@ -1,5 +1,5 @@
-#ifndef MATRIX_VECTOR_OP_H_
-#define MATRIX_VECTOR_OP_H_
+#ifndef SMATH_MATRIX_VECTOR_OP_H_
+#define SMATH_MATRIX_VECTOR_OP_H_
 #include "matrices.h"
 #include "vectorf.h"
 
@@ -8,4 +8,4 @@ extern mat4x4 mat4_perspective(float angle_rad, float aspect_ratio, float near, 
 extern mat4x4 mat4_lookat(fvec *position, fvec *target, fvec *up);
 extern mat4x4 vec4_outer_product(fvec *input0,  fvec *input1);
 extern fvec   mat4_vec_product(mat4x4 const *mat, fvec *vec);
-#endif // MATRIX_VECTOR_OP_H_
+#endif // SMATH_MATRIX_VECTOR_OP_H_

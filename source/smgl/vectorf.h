@@ -1,5 +1,5 @@
-#ifndef SMATH_VECTORS_H_
-#define SMATH_VECTORS_H_
+#ifndef SMATH_VECTORF_H_
+#define SMATH_VECTORF_H_
 #include <stdint.h>
 #include "..\..\include/platform.h"
 
@@ -51,4 +51,4 @@ inline fvec fvec2_init(float x, float y)
     return output;
 }
 
-#endif // SMATH_VECTORS_H_
+#endif // SMATH_VECTORF_H_

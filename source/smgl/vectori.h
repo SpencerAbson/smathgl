@@ -1,5 +1,5 @@
-#ifndef VECTORI_H_
-#define VECTORI_H_
+#ifndef SMATH_VECTORI_H_
+#define SMATH_VECTORI_H_
 #include <stdint.h>
 #include "..\..\include/platform.h"
 /* i32 composed vectors, aligned on 16 byte boundary for 128 bit SSE */
@@ -46,4 +46,4 @@ inline ivec ivec2_init(float x, float y)
     output.data.sse_register = _mm_set_epi32(0, 0, y, x);
     return output;
 }
-#endif // VECTORI_H_
+#endif // SMATH_SMATH_VECTORI_H_
