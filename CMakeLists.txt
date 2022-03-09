@@ -14,7 +14,9 @@ add_library(
 
 IF(MSVC)
   add_definitions(/arch:AVX2)
-  add_definitions(/O2)
+  IF(CMAKE_BUILD_TYPE EQUAL "RELEASE")
+    add_definitions(/O2)
+  ENDIF()
 ELSE(MSVC)
   add_definitions(-O3)
   add_definitions(-msse4.2)
