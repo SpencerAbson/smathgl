@@ -41,10 +41,10 @@ static inline float vectorf128_dot(__m128 input0, __m128 input1)
     float out;
 #if SMGL_INSTRSET > 4
     out = _mm_cvtss_f32(_mm_dp_ps(input0, input1, 0xff));
-#endif
+#else
     __m128 product = _mm_mul_ps(input0, input1);
     _mm_store_ss(&out, vectorf128_sum(product));
-
+#endif
     return out;
 }
 
