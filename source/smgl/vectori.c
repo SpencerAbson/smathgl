@@ -4,6 +4,7 @@
 #include "..\..\include/platform.h"
 #include "simd/vectori128.h"
 
+/* will hold more complex functions using multiple built-up simd instructions (worth the overhead)*/
 
 int32_t ivec_dot(ivec const *input0, ivec const *input1)
 {

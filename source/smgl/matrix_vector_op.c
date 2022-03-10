@@ -22,10 +22,10 @@ void mat4_lookat(mat4x4 *out, fvec const *pos, fvec const *target, fvec const *u
     fvec cam_right, cam_up, cam_direction;
     fvec_mm_sub(cam_direction, *pos, *target);
     fvec_normalize(&cam_direction, &cam_direction);
-    fvec_cross(&cam_right, up, &cam_direction);
+    fvec_mm_cross(cam_right, *up, cam_direction);
     fvec_normalize(&cam_right, &cam_right);
 
-    fvec_cross(&cam_up, &cam_direction, &cam_right);
+    fvec_mm_cross(cam_up, cam_direction, cam_right);
     fvec_normalize(&cam_up, &cam_up);
     mat4x4 m1, m2;
     m1.sse_registers[0] = _mm_set_ps(0.0f, cam_direction.data.values[0], cam_up.data.values[0], cam_right.data.values[0]);

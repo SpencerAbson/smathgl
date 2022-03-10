@@ -18,7 +18,6 @@ typedef struct fvec {
 }fvec;
 
 /* f32 composed vector functions */
-extern void  fvec_cross(fvec *out, fvec const *input0, fvec const *input1); // calc cross product of a fvec3t
 extern float fvec_dot(fvec const *input0, fvec const *input1);  // compute dot product of 2 vec2/3/4s
 extern void  fvec_scale(fvec *out, fvec const *input, float scalar);
 extern void  fvec_normalize(fvec *out, fvec const *input); // normalize vec2/3/4s and store in out
@@ -36,7 +35,7 @@ extern void  fvec_normalize(fvec *out, fvec const *input); // normalize vec2/3/4
     (vec_in).size = 2;\
     (vec_in).data.sse_register = _mm_set_ps((0.0f), (0.0f), (y), (x));
 
-/* Primitve functions that aren't worth the overhead: */
+/* Primitve functions that aren't worth the overhead: (trust me it makes a difference) */
 #define fvec_mm_add(vec_out, v0, v1)            \
     assert((v0).size == (v1).size);             \
     (vec_out).size = (v0).size;                 \
@@ -51,5 +50,10 @@ extern void  fvec_normalize(fvec *out, fvec const *input); // normalize vec2/3/4
     assert((v0).size == (v1).size);             \
     (vec_out).size = (v0).size;                 \
     (vec_out).data.sse_register = _mm_mul_ps((v0).data.sse_register, (v1).data.sse_register)
+
+#define fvec_mm_cross(vec_out, v0, v1)            \
+    assert((v0).size == (v1).size && (v0).size == 3);             \
+    (vec_out).size = (v0).size;                 \
+    (vec_out).data.sse_register = vectorf128_cross((v0).data.sse_register, (v1).data.sse_register)
 
 #endif // SMATH_VECTORF_H_
