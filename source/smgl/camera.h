@@ -42,6 +42,6 @@ extern SmCamera *sm_cam_create(fvec position, fvec up, float yaw, float pitch);
 extern void sm_cam_process_keyboard(SmCamera *self, enum SmCameraDirection directiom, float delta_time);
 extern void sm_cam_process_mouse(SmCamera *self, float x_offset, float y_offset, bool pitch_constraint);
 extern void sm_cam_process_scroll(SmCamera *self, float y_offset);
-extern mat4x4 sm_cam_lookat(SmCamera *self);
+extern void sm_cam_lookat(mat4x4 *out, SmCamera const *self);
 
 #endif // CAMERA_H_

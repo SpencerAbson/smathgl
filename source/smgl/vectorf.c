@@ -5,37 +5,12 @@
 #include "simd/vectorf128.h"
 
 
-fvec fvec_add(fvec const *input0, fvec const *input1)
+void fvec_cross(fvec *output, fvec const *input0, fvec const *input1)
 {
-    fvec output;
-    assert(input0->size == input1->size);
-    output.size = input0->size;
-    output.data.sse_register =  _mm_add_ps(input0->data.sse_register,
-                                                input1->data.sse_register);
-    return output;
-}
-
-
-fvec fvec_sub(fvec const *input0, fvec const *input1)
-{
-    fvec output;
-    assert(input0->size == input1->size);
-    output.size = input0->size;
-    output.data.sse_register =  _mm_sub_ps(input0->data.sse_register,
-                                                input1->data.sse_register);
-    return output;
-}
-
-
-fvec fvec_cross(fvec const *input0, fvec const *input1)
-{
-    fvec output;
     assert(input0->size == input1->size && input1->size == 3);
-    output.size = input0->size;
-    output.data.sse_register =  vectorf128_cross(input0->data.sse_register,
+    output->size = input0->size;
+    output->data.sse_register =  vectorf128_cross(input0->data.sse_register,
                                                     input1->data.sse_register);
-
-    return output;
 }
 
 
@@ -46,47 +21,30 @@ float fvec_dot(fvec const *input0, fvec const *input1)
 }
 
 
-fvec fvec_mul(fvec const *input0, fvec const *input1)
+
+void fvec_scale(fvec *output, fvec const *input, float scalar)
 {
-    fvec output;
-    assert(input0->size == input1->size);
-    output.size = input0->size;
-    output.data.sse_register =  _mm_mul_ps(input0->data.sse_register,
-                                                    input1->data.sse_register);
-
-    return output;
-}
-
-
-fvec fvec_scale(fvec const *input, float scalar)
-{
-    fvec output;
     __m128 scaling_vec = _mm_set_ps1(scalar);
-    output.size = input->size;
-    output.data.sse_register = _mm_mul_ps(input->data.sse_register, scaling_vec);
-
-    return output;
+    output->size = input->size;
+    output->data.sse_register = _mm_mul_ps(input->data.sse_register, scaling_vec);
 }
 
 
 #if SMGL_INSTRSET >= 3 // _mm_hadd_ps for > SEE 3
-fvec fvec_normalize(fvec const *input)
+void fvec_normalize(fvec *output, fvec const *input)
 {
     assert(input->size < 5 && input->size > 1);
-    fvec output;
-    output.size = input->size;
-    output.data.sse_register = vectorf128_normalize(input->data.sse_register);
-    return output;
+    output->size = input->size;
+    output->data.sse_register = vectorf128_normalize(input->data.sse_register);
 }
 
 #else
 
-fvec fvec_normalize(fvec const *input)
+void fvec_normalize(fvec *out, fvec const *input)
 {
     // this is... something
     assert(input->size < 5 && input->size > 1);
-    fvec out;
-    out.size = input->size;
+    out->size = input->size;
     float vec_sqr_sum = 0.0f;
     for (uint32_t i = 0; i < input->size; i++)
         vec_sqr_sum += powf(input->data.values[i], 2);
@@ -94,37 +52,7 @@ fvec fvec_normalize(fvec const *input)
     float dividor = sqrtf(vec_sqr_sum);
 
     for (uint32_t i = 0; i < input->size; i++)
-        out.data.values[i] = input->data.values[i] / dividor;
-
-    return out;
+        out->data.values[i] = input->data.values[i] / dividor;
 }
 
 #endif
-
-
-/* Vector initlisers  */
-fvec fvec4_init(float x, float y, float z, float w)
-{
-    fvec output;
-    output.size = 4;
-    output.data.sse_register = _mm_set_ps(w, z, y, x);
-    return output;
-}
-
-
-fvec fvec3_init(float x, float y, float z)
-{
-    fvec output;
-    output.size = 3;
-    output.data.sse_register = _mm_set_ps(0.0f, z, y, x);
-    return output;
-}
-
-
-fvec fvec2_init(float x, float y)
-{
-    fvec output;
-    output.size = 2;
-    output.data.sse_register = _mm_set_ps(0.0f, 0.0f, y, x);
-    return output;
-}

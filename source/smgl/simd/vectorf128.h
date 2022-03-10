@@ -39,12 +39,12 @@ static inline __m128 vectorf128_min(__m128 v)
 static inline float vectorf128_dot(__m128 input0, __m128 input1)
 {
     float out;
-#if SMGL_INSTRSET > 4
-    out = _mm_cvtss_f32(_mm_dp_ps(input0, input1, 0xff));
-#else
-    __m128 product = _mm_mul_ps(input0, input1);
-    _mm_store_ss(&out, vectorf128_sum(product));
-#endif
+    __m128 r;
+     r = _mm_mul_ps(input0, input1);
+     r = _mm_add_ps(_mm_movehl_ps(r, r), r);
+     r = _mm_add_ss(_mm_shuffle_ps(r, r, 1), r) ;
+
+    _mm_store_ss(&out, r);
     return out;
 }
 

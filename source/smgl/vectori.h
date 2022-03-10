@@ -17,16 +17,31 @@ typedef struct ivec {
 }ivec;
 
 /* i32 composed vector functions  */
-extern ivec ivec_add(ivec const *input0, ivec const *input1); // add ivec2/3/4s and store result in dst
-extern ivec ivec_sub(ivec const *input0, ivec const *input1); // subtract ivec2/3/4s and stpre result in dst
-extern ivec ivec_mul(ivec const *input0, ivec const *input1);
-extern ivec ivec_cross(ivec const *input0, ivec const *input1); // calc cross product of a vec3
-extern ivec ivec_scale(ivec const *addr_in, int32_t scalar);
+extern void ivec_mul(ivec *out, ivec const *input0, ivec const *input1);
+extern void ivec_cross(ivec *out, ivec const *input0, ivec const *input1); // calc cross product of a vec3
+extern void ivec_scale(ivec *out, ivec const *addr_in, int32_t scalar);
 extern int32_t ivec_dot(ivec const *input0, ivec const *input1); // compute dot product of 2 ivec2/3/4s
 
-/* Vector initers, will zero out unused componets. */
-extern ivec ivec4_init(int32_t x, int32_t y, int32_t z, int32_t w);
-extern ivec ivec3_init(int32_t x, int32_t y, int32_t z);
-extern ivec ivec2_init(int32_t x, int32_t y);
+/* Vector initers and primitive function macro wrappers */
+#define ivec4_mm_init(vec_out, x, y, z, w)         \
+    (vec_out)->size = 4;                        \
+    (vec_out)->data.sse_register = _mm_set_epi32((w), (z), (y), (x));
 
+#define ivec3_mm_init(vec_out, x, y, z)            \
+    (vec_out)->size = 3;                        \
+    (vec_out)->data.sse_register = _mm_set_epi32(0, (z), (y), (x));
+
+#define ivec2_mm_init(vec_out, x, y)               \
+    (vec_out)->size = 2;                        \
+    (vec_out)->data.sse_register = _mm_set_epi32(0, 0, (y), (x))
+
+#define ivec_mm_add(vec_out, v0, v1)            \
+    assert((v0).size == (v1).size);             \
+    (vec_out).size = (v0).size;                 \
+    (vec_out).data.sse_register = _mm_add_epi((v0).data.sse_register, (v1).data.sse_register)
+
+#define ivec_mm_sub(vec_out, v0, v1)            \
+    assert((v0).size == (v1).size);             \
+    (vec_out).size = (v0).size;                 \
+    (vec_out).data.sse_register = _mm_sub_epi((v0).data.sse_register, (v1).data.sse_register)
 #endif // SMATH_SMATH_VECTORI_H_

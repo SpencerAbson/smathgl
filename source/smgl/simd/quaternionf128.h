@@ -4,7 +4,6 @@
 #include <assert.h>
 #include "..\..\..\include/platform.h"
 #include "..\..\..\include/smathgl.h"
-#include "..\quaternions.h"
 #include "vectorf128.h"
 
 
@@ -30,7 +29,7 @@ static inline __m128 quaternionf128_mul(__m128 a, __m128 b) // credit to Agner F
 }
 
 
-static inline __m128 quaternionf128_rotate(quat* q0, fvec *axis, const float angle)
+/* static inline __m128 quaternionf128_rotate(quat* q0, fvec *axis, const float angle)
 {
     assert(axis->size == 3);
     float half_ang = angle / 2.0f;
@@ -42,7 +41,7 @@ static inline __m128 quaternionf128_rotate(quat* q0, fvec *axis, const float ang
     total = quaternionf128_mul(local_rotation, total);
 
     return total;
-}
+}*/
 
 
 static inline __m128 quaternionf128_pure_rotate(__m128 original, __m128 rotation)

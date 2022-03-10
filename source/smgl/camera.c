@@ -9,18 +9,18 @@
 
 /* Example of how one might implement an FPS camera using the basics of the lib. */
 
-
 static void sm_update_camera_vectors(SmCamera *self)
 {
-    fvec new_front = fvec3_init(cosf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)),
+    fvec new_front;
+    fvec3_mm_init(new_front, cosf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)),
                               sinf(RADIANS(self->pitch)),
                               sinf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)));
 
-    self->front = fvec_normalize(&new_front);
-    self->right = fvec_cross(&self->front, &self->world_up);
-    self->right = fvec_normalize(&self->right);
-    self->up    = fvec_cross(&self->right, &self->front);
-    self->up    = fvec_normalize(&self->up);
+    fvec_normalize(&self->front, &new_front);
+    fvec_cross(&self->right, &self->front, &self->world_up);
+    fvec_normalize(&self->right, &self->right);
+    fvec_cross(&self->up, &self->right, &self->front);
+    fvec_normalize(&self->up, &self->up);
 }
 
 
@@ -33,7 +33,7 @@ SmCamera *sm_cam_create(fvec position, fvec up, float yaw, float pitch)
     self->yaw      = yaw;
     self->pitch    = pitch;
 
-    self->front = fvec3_init(0.0f, 0.0f, -1.0f);
+    fvec3_mm_init(self->front, 0.0f, 0.0f, -1.0f);
     self->movement_speed    = CAM_DEFAULT_SPEED;
     self->mouse_sensitivity = CAM_DEFAULT_SENS;
     self->zoom              = CAM_DEFAULT_ZOOM;
@@ -51,33 +51,33 @@ void sm_cam_process_keyboard(SmCamera *self, enum SmCameraDirection direction, f
     switch(direction)
     {
         case CAMDIR_FORWARD:
-            intermediate   = fvec_scale(&self->front, velocity);
-            self->position = fvec_add(&self->position, &intermediate);
+            fvec_scale(&intermediate, &self->front, velocity);
+            fvec_mm_add(self->position, self->position, intermediate);
             break;
 
         case CAMDIR_BACKWARD:
-            intermediate   = fvec_scale(&self->front, velocity);
-            self->position = fvec_sub(&self->position, &intermediate);
+            fvec_scale(&intermediate, &self->front, velocity);
+            fvec_mm_sub(self->position, self->position, intermediate);
             break;
 
         case CAMDIR_LEFT:
-            intermediate   = fvec_scale(&self->right, velocity);
-            self->position = fvec_sub(&self->position, &intermediate);
+            fvec_scale(&intermediate, &self->right, velocity);
+            fvec_mm_sub(self->position, self->position, intermediate);
             break;
 
         case CAMDIR_RIGHT:
-            intermediate   = fvec_scale(&self->right, velocity);
-            self->position = fvec_add(&self->position, &intermediate);
+            fvec_scale(&intermediate, &self->right, velocity);
+            fvec_mm_add(self->position, self->position, intermediate);
             break;
 
         case CAMDIR_UP:
-            intermediate   = fvec_scale(&self->up, velocity);
-            self->position = fvec_add(&self->position, &intermediate);
+            fvec_scale(&intermediate, &self->up, velocity);
+            fvec_mm_add(self->position, self->position, intermediate);
             break;
 
         case CAMDIR_DOWN:
-            intermediate   = fvec_scale(&self->up, velocity);
-            self->position = fvec_sub(&self->position, &intermediate);
+            fvec_scale(&intermediate, &self->up, velocity);
+            fvec_mm_sub(self->position, self->position, intermediate);
     }
 
 }
@@ -109,9 +109,9 @@ void sm_cam_process_scroll(SmCamera *self, float y_offset)
 }
 
 
-mat4x4 sm_cam_lookat(SmCamera *self)
+void sm_cam_lookat(mat4x4 *output, SmCamera const *self)
 {
     fvec pos_front;
-    pos_front = fvec_add(&self->position, &self->front);
-    return mat4_lookat(&self->position, &pos_front, &self->up);
+    fvec_mm_add(pos_front, self->position, self->front);
+    mat4_lookat(output, &self->position, &pos_front, &self->up);
 }
