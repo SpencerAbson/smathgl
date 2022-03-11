@@ -18,31 +18,3 @@ void fvec_scale(fvec *output, fvec const *input, float scalar)
     output->size = input->size;
     output->data.sse_register = _mm_mul_ps(input->data.sse_register, scaling_vec);
 }
-
-
-#if SMGL_INSTRSET >= 3 // _mm_hadd_ps for > SEE 3
-void fvec_normalize(fvec *output, fvec const *input)
-{
-    assert(input->size < 5 && input->size > 1);
-    output->size = input->size;
-    output->data.sse_register = vectorf128_normalize(input->data.sse_register);
-}
-
-#else
-
-void fvec_normalize(fvec *out, fvec const *input)
-{
-    // this is... something
-    assert(input->size < 5 && input->size > 1);
-    out->size = input->size;
-    float vec_sqr_sum = 0.0f;
-    for (uint32_t i = 0; i < input->size; i++)
-        vec_sqr_sum += powf(input->data.values[i], 2);
-
-    float dividor = sqrtf(vec_sqr_sum);
-
-    for (uint32_t i = 0; i < input->size; i++)
-        out->data.values[i] = input->data.values[i] / dividor;
-}
-
-#endif

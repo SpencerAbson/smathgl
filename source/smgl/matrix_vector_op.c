@@ -21,12 +21,12 @@ void mat4_lookat(mat4x4 *out, fvec const *pos, fvec const *target, fvec const *u
     assert(pos->size == 3 && target->size == 3 && up->size == 3);
     fvec cam_right, cam_up, cam_direction;
     fvec_mm_sub(cam_direction, *pos, *target);
-    fvec_normalize(&cam_direction, &cam_direction);
+    fvec_mm_normalize(cam_direction, cam_direction);
     fvec_mm_cross(cam_right, *up, cam_direction);
-    fvec_normalize(&cam_right, &cam_right);
+    fvec_mm_normalize(cam_right, cam_right);
 
     fvec_mm_cross(cam_up, cam_direction, cam_right);
-    fvec_normalize(&cam_up, &cam_up);
+    fvec_mm_normalize(cam_up, cam_up);
     mat4x4 m1, m2;
     m1.sse_registers[0] = _mm_set_ps(0.0f, cam_direction.data.values[0], cam_up.data.values[0], cam_right.data.values[0]);
     m1.sse_registers[1] = _mm_set_ps(0.0f, cam_direction.data.values[1], cam_up.data.values[1], cam_right.data.values[1]);
@@ -43,12 +43,13 @@ void mat4_rotate(mat4x4 *output, mat4x4 const *input, fvec const* axis, float an
 {
     // generate quaternion rep of rotation by rotaing {1, 0, 0, 0} by input
     quat identity;
-    fvec normed_axis;
-    mat4x4 rotator;
     quat_mm_init(identity, 1.0f, 0.0f, 0.0f, 0.0f);
-    fvec_normalize(&normed_axis, axis);
+    fvec normed_axis;
+    fvec_mm_normalize(normed_axis, (*axis));
+    mat4x4 rotator;
     quat_rotate_mat4(&rotator, &identity, &normed_axis, angle_rad);
-    mat4_mm_mul(*output, *input, rotator);
+
+    mat4_mm_mul((*output), (*input), rotator);
 }
 
 

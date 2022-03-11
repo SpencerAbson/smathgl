@@ -59,7 +59,7 @@ static inline __m128 vectorf128_vector_dot(__m128 input0, __m128 input1)
 }
 
 
-static inline __m128 vectorf128_normalize(__m128 input)
+static inline __m128 vectorf128_normalize(const __m128 input)
 {
     __m128 dot = vectorf128_vector_dot(input, input);
     __m128 isr = _mm_rsqrt_ps(dot);

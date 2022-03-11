@@ -20,7 +20,6 @@ typedef struct fvec {
 /* f32 composed vector functions */
 extern float fvec_dot(fvec const *input0, fvec const *input1);  // compute dot product of 2 vec2/3/4s
 extern void  fvec_scale(fvec *out, fvec const *input, float scalar);
-extern void  fvec_normalize(fvec *out, fvec const *input); // normalize vec2/3/4s and store in out
 
 /* vector initers and primitive functions  */
 #define fvec4_mm_init(vec_in, x, y, z, w)\
@@ -55,5 +54,11 @@ extern void  fvec_normalize(fvec *out, fvec const *input); // normalize vec2/3/4
     assert((v0).size == (v1).size && (v0).size == 3);             \
     (vec_out).size = (v0).size;                 \
     (vec_out).data.sse_register = vectorf128_cross((v0).data.sse_register, (v1).data.sse_register)
+
+#define fvec_mm_normalize(vec_out, v0)            \
+    assert((v0).size < 5 && (v0).size > 1);   \
+    (vec_out).size = (v0).size;                   \
+    (vec_out).data.sse_register = vectorf128_normalize((v0).data.sse_register)
+
 
 #endif // SMATH_VECTORF_H_

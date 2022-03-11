@@ -10,7 +10,6 @@ typedef union vec128f quat;
 extern void quat_rotate(quat *out, quat const *q0, fvec const *axis, const float angle);
 extern void quat_inverse(quat *out, quat const *input);
 extern void quat_interpolate(quat *out, quat const*q0, quat const*q1, float interp_param); // slerp
-
 // rotate q0 around axis by angle and return mat4 representation of resultant quat
 extern void quat_rotate_mat4(mat4x4 *out, quat const *q0, fvec const *axis, float const angle);
 
@@ -25,6 +24,6 @@ extern void quat_rotate_mat4(mat4x4 *out, quat const *q0, fvec const *axis, floa
     (qout).sse_register = quaternionf128_mul((q0).sse_register, (q1).sse_register)
 
 #define quat_mm_init(qout, w, x, y, z)              \
-    (qout).sse_register = _mm_set_ps(z, y, x, w)
+    (qout).sse_register = _mm_set_ps((z), (y), (x), (w))
 
 #endif // QUATERNIONS_H_
