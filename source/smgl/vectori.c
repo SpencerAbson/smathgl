@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <math.h>
+#include <stdio.h>
 #include "vectori.h"
 #include "..\..\include/platform.h"
 #include "simd/vectori128.h"
@@ -28,4 +29,13 @@ void ivec_scale(ivec *output, ivec const *input, int32_t scalar)
     __m128i scaling_vec = _mm_set1_epi32(scalar);
     output->size = input->size;
     output->data.sse_register = v_mul_i32(input->data.sse_register, scaling_vec);
+}
+
+
+void ivec_display(ivec const *input)
+{
+    printf("[ ");
+    for(uint32_t i = 0; i < input->size; i++)
+        printf("%d ", input->data.values[i]);
+    printf(" ]");
 }

@@ -21,6 +21,7 @@ typedef struct fvec {
 extern float fvec_dot(fvec const *input0, fvec const *input1);  // compute dot product of 2 vec2/3/4se
 extern float fvec_min(fvec const *input);
 extern void  fvec_scale(fvec *out, fvec const *input, float scalar);
+extern void  fvec_display(fvec const *input);
 
 /* vector initers and primitive functions  */
 #define fvec4_mm_init(vec_in, x, y, z, w)\

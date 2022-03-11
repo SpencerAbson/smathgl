@@ -12,7 +12,6 @@ typedef union mat4x4
     __m128 sse_registers[4];
 }mat4x4;
 
-extern void mat4_init(mat4x4 *out);
 extern void mat4_init_translation(mat4x4 *out, const float translator);
 extern void mat4_display(const mat4x4 *mat);
 

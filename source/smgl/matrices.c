@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "matrices.h"
-#include "simd/matrix4xm128f.h"
 
 
 void mat4_init_translation(mat4x4 *output, const float translator)
@@ -14,15 +13,6 @@ void mat4_init_translation(mat4x4 *output, const float translator)
     return;
 }
 
-
-void mat4_init(mat4x4 *output)
-{
-    output->sse_registers[0] = _mm_set_ps1(0.0f);
-    output->sse_registers[1] = _mm_set_ps1(0.0f);
-    output->sse_registers[2] = _mm_set_ps1(0.0f);
-    output->sse_registers[3] = _mm_set_ps1(0.0f);
-
-}
 
 void mat4_display(const mat4x4 *mat)
 {
