@@ -45,11 +45,11 @@ void mat4_rotate(mat4x4 *output, mat4x4 const *input, fvec const* axis, float an
     quat identity;
     quat_mm_init(identity, 1.0f, 0.0f, 0.0f, 0.0f);
     fvec normed_axis;
-    fvec_mm_normalize(normed_axis, (*axis));
+    fvec_mm_normalize(normed_axis, *axis);
     mat4x4 rotator;
     quat_rotate_mat4(&rotator, &identity, &normed_axis, angle_rad);
 
-    mat4_mm_mul((*output), (*input), rotator);
+    mat4_mm_mul(*output, *input, rotator);
 }
 
 
