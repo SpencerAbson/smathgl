@@ -9,25 +9,25 @@
 
 /* Example of how one might implement an FPS camera using the basics of the lib. */
 
-static void sm_update_camera_vectors(SmCamera *self)
+static void sm_update_camera_vectors(sm_camera_t *self)
 {
     fvec new_front;
     fvec3_mm_init(new_front, cosf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)),
                               sinf(RADIANS(self->pitch)),
                               sinf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)));
 
-    fvec_normalize(&self->front, &new_front);
+    fvec_mm_normalize(self->front, new_front);
     fvec_mm_cross(self->right, self->front, self->world_up);
-    fvec_normalize(&self->right, &self->right);
+    fvec_mm_normalize(self->right, self->right);
     fvec_mm_cross(self->up, self->right, self->front);
-    fvec_normalize(&self->up, &self->up);
+    fvec_mm_normalize(self->up, self->up);
 }
 
 
-SmCamera *sm_cam_create(fvec position, fvec up, float yaw, float pitch)
+sm_camera_t *sm_cam_create(fvec position, fvec up, float yaw, float pitch)
 {
     assert(position.size == 3 && up.size == 3);
-    SmCamera *self = malloc(sizeof(SmCamera));
+    sm_camera_t *self = malloc(sizeof(sm_camera_t));
     self->position = position;
     self->world_up = up;
     self->yaw      = yaw;
@@ -43,7 +43,7 @@ SmCamera *sm_cam_create(fvec position, fvec up, float yaw, float pitch)
 }
 
 
-void sm_cam_process_keyboard(SmCamera *self, enum SmCameraDirection direction, float delta_time)
+void sm_cam_process_keyboard(sm_camera_t *self, enum SmCameraDirection direction, float delta_time)
 {
     float velocity = self->movement_speed * delta_time; // displacement ?
     fvec intermediate;
@@ -83,7 +83,7 @@ void sm_cam_process_keyboard(SmCamera *self, enum SmCameraDirection direction, f
 }
 
 
-void sm_cam_process_mouse(SmCamera *self, float x_offset, float y_offset, bool pitch_constraint)
+void sm_cam_process_mouse(sm_camera_t *self, float x_offset, float y_offset, bool pitch_constraint)
 {
     x_offset *= self->mouse_sensitivity;
     y_offset *= self->mouse_sensitivity;
@@ -101,7 +101,7 @@ void sm_cam_process_mouse(SmCamera *self, float x_offset, float y_offset, bool p
 }
 
 
-void sm_cam_process_scroll(SmCamera *self, float y_offset)
+void sm_cam_process_scroll(sm_camera_t *self, float y_offset)
 {
     self->zoom -= y_offset;
     if(self->zoom < 1.0f) self->zoom = 1.0f;
@@ -109,7 +109,7 @@ void sm_cam_process_scroll(SmCamera *self, float y_offset)
 }
 
 
-void sm_cam_lookat(mat4x4 *output, SmCamera const *self)
+void sm_cam_lookat(mat4x4 *output, sm_camera_t const *self)
 {
     fvec pos_front;
     fvec_mm_add(pos_front, self->position, self->front);

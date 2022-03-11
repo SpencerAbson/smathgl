@@ -22,7 +22,7 @@ CAMDIR_UP,
 CAMDIR_DOWN
 }CameraDirection;
 
-typedef struct SmCamera_t
+typedef struct sm_camera
 {
     fvec position;
     fvec front;
@@ -36,12 +36,12 @@ typedef struct SmCamera_t
     float mouse_sensitivity;
     float zoom;
 
-}SmCamera;
+}sm_camera_t;
 
-extern SmCamera *sm_cam_create(fvec position, fvec up, float yaw, float pitch);
-extern void sm_cam_process_keyboard(SmCamera *self, enum SmCameraDirection directiom, float delta_time);
-extern void sm_cam_process_mouse(SmCamera *self, float x_offset, float y_offset, bool pitch_constraint);
-extern void sm_cam_process_scroll(SmCamera *self, float y_offset);
-extern void sm_cam_lookat(mat4x4 *out, SmCamera const *self);
+extern sm_camera_t *sm_cam_create(fvec position, fvec up, float yaw, float pitch);
+extern void sm_cam_process_keyboard(sm_camera_t *self, enum SmCameraDirection directiom, float delta_time);
+extern void sm_cam_process_mouse(sm_camera_t *self, float x_offset, float y_offset, bool pitch_constraint);
+extern void sm_cam_process_scroll(sm_camera_t *self, float y_offset);
+extern void sm_cam_lookat(mat4x4 *out, sm_camera_t const *self);
 
 #endif // CAMERA_H_
