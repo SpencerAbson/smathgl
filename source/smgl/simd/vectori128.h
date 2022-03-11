@@ -29,6 +29,7 @@ static inline __m128i v_mul_i32(__m128i input0, __m128i input1)
 
 }
 
+
 static inline __m128i vectori128_cross(__m128i input0, __m128i input1)
 {
     __m128i a, b,  v1, v2; // cross product can be computed by (y1, z1, x1) * (z2, x2, y2) - (z1, x1, y1) * (y2, z2, x2 )

@@ -13,6 +13,16 @@ int32_t ivec_dot(ivec const *input0, ivec const *input1)
 }
 
 
+int32_t ivec_min(ivec const *input)
+{
+    int32_t min;
+    __m128i min_vec = vectori128_min(input->data.sse_register);
+    v_storeu_i32(&min, min_vec);
+
+    return min;
+}
+
+
 void ivec_scale(ivec *output, ivec const *input, int32_t scalar)
 {
     __m128i scaling_vec = _mm_set1_epi32(scalar);

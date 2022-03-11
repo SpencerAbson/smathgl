@@ -18,7 +18,8 @@ typedef struct fvec {
 }fvec;
 
 /* f32 composed vector functions */
-extern float fvec_dot(fvec const *input0, fvec const *input1);  // compute dot product of 2 vec2/3/4s
+extern float fvec_dot(fvec const *input0, fvec const *input1);  // compute dot product of 2 vec2/3/4se
+extern float fvec_min(fvec const *input);
 extern void  fvec_scale(fvec *out, fvec const *input, float scalar);
 
 /* vector initers and primitive functions  */
@@ -60,5 +61,8 @@ extern void  fvec_scale(fvec *out, fvec const *input, float scalar);
     (vec_out).size = (v0).size;                   \
     (vec_out).data.sse_register = vectorf128_normalize((v0).data.sse_register)
 
+#define fvec_mm_reverse(vec_out, v0)               \
+    (vec_out).size = (v0).size;                 \
+    (vec_out).data.sse_register = _mm_shuffle_ps((v0).data.sse_registerm, (v0).data.sse_register, _MM_SHUFFLE(0, 1, 2, 3));
 
 #endif // SMATH_VECTORF_H_

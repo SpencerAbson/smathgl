@@ -18,3 +18,12 @@ void fvec_scale(fvec *output, fvec const *input, float scalar)
     output->size = input->size;
     output->data.sse_register = _mm_mul_ps(input->data.sse_register, scaling_vec);
 }
+
+
+float fvec_min(fvec const *input)
+{
+    float min;
+    __m128 min_vec = vectorf128_min(input->data.sse_register);
+    _mm_store_ss(&min, min_vec);
+    return min;
+}

@@ -20,7 +20,7 @@ typedef struct ivec {
 /* i32 composed vector functions  */
 extern void ivec_scale(ivec *out, ivec const *addr_in, int32_t scalar);
 extern int32_t ivec_dot(ivec const *input0, ivec const *input1); // compute dot product of 2 ivec2/3/4s
-
+extern int32_t ivec_min(ivec const *input);
 /* Vector initers and primitive function macro wrappers */
 #define ivec4_mm_init(vec_out, x, y, z, w)      \
     (vec_out)->size = 4;                        \
@@ -53,5 +53,10 @@ extern int32_t ivec_dot(ivec const *input0, ivec const *input1); // compute dot 
     assert((v0).size == (v1).size && (v0).size == 3);             \
     (vec_out).size = (v0).size;                 \
     (vec_out).data.sse_register = vectori128_cross((v0).data.sse_register, (v1).data.sse_register)
+
+#define ivec_mm_reverse(vec_out, v0)            \
+    (vec_out).size = (v0).size;                 \
+    (vec_out).data.sse_register = _mm_shuffle_epi32((v0).data.sse_registerm, _MM_SHUFFLE(0, 1, 2, 3));
+
 
 #endif // SMATH_SMATH_VECTORI_H_
