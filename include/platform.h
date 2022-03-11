@@ -85,6 +85,6 @@
     #define M_PI 3.14159265358979323846
 #endif
 
-#define RADIANS(x) (x/180.0f * (float)M_PI)
+#define SM_RADIANS(x) (x/180.0f * (float)M_PI)
 
 #endif // SMGL_PLATFORM_H_

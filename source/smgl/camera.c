@@ -12,9 +12,9 @@
 static void sm_update_camera_vectors(sm_camera_t *self)
 {
     fvec new_front;
-    fvec3_mm_init(new_front, cosf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)),
-                              sinf(RADIANS(self->pitch)),
-                              sinf(RADIANS(self->yaw)) * cosf(RADIANS(self->pitch)));
+    fvec3_mm_init(new_front, cosf(SM_RADIANS(self->yaw)) * cosf(SM_RADIANS(self->pitch)),
+                              sinf(SM_RADIANS(self->pitch)),
+                              sinf(SM_RADIANS(self->yaw)) * cosf(SM_RADIANS(self->pitch)));
 
     fvec_mm_normalize(self->front, new_front);
     fvec_mm_cross(self->right, self->front, self->world_up);

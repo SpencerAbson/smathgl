@@ -33,7 +33,7 @@ void mat4_lookat(mat4x4 *out, fvec const *pos, fvec const *target, fvec const *u
     m1.sse_registers[2] = _mm_set_ps(0.0f, cam_direction.data.values[2], cam_up.data.values[2], cam_right.data.values[2]);
     m1.sse_registers[3] = _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f);
 
-    mat4_init_translation(&m2, 1.0f);
+    mat4_init_diagonal(&m2, 1.0f);
     m2.sse_registers[3] = _mm_set_ps(1.0f, -pos->data.values[2], -pos->data.values[1], -pos->data.values[0]);
     mat4_mm_mul(*out, m1, m2);
 }

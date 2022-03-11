@@ -12,7 +12,8 @@ typedef union mat4x4
     __m128 sse_registers[4];
 }mat4x4;
 
-extern void mat4_init_translation(mat4x4 *out, const float translator);
+extern void mat4_init_diagonal(mat4x4 *out, const float translator);
+extern void mat4_init_translation(mat4x4 *out, float x, float y, float z);
 extern void mat4_display(const mat4x4 *mat);
 
 /* Primitve functions that aren't worth the overhead: */
