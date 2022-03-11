@@ -27,7 +27,7 @@ extern void mat4_display(const mat4x4 *mat);
     mat4xm128_sub((in0).sse_registers, (in1).sse_registers, (out).sse_registers)
 
 #define mat4_mm_transpose(out, in0)                \
-    mat4xm128_transpose((in0).sse_registers, (in0).sse_registers)
+    mat4xm128_transpose((in0).sse_registers, (out).sse_registers)
 
 static inline void mat4_clear(mat4x4 *input){
     memset(input->values, 0, sizeof(float) * 16);
