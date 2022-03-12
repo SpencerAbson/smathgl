@@ -24,11 +24,11 @@ CAMDIR_DOWN
 
 typedef struct sm_camera
 {
-    fvec position;
-    fvec front;
-    fvec right;
-    fvec up;
-    fvec world_up;
+    fvec_t position;
+    fvec_t front;
+    fvec_t right;
+    fvec_t up;
+    fvec_t world_up;
 
     float pitch;
     float yaw;
@@ -38,10 +38,10 @@ typedef struct sm_camera
 
 }sm_camera_t;
 
-extern sm_camera_t *sm_cam_create(fvec position, fvec up, float yaw, float pitch);
+extern sm_camera_t *sm_cam_create(fvec_t position, fvec_t up, float yaw, float pitch);
 extern void sm_cam_process_keyboard(sm_camera_t *self, enum SmCameraDirection directiom, float delta_time);
 extern void sm_cam_process_mouse(sm_camera_t *self, float x_offset, float y_offset, bool pitch_constraint);
 extern void sm_cam_process_scroll(sm_camera_t *self, float y_offset);
-extern void sm_cam_lookat(mat4x4 *out, sm_camera_t const *self);
+extern void sm_cam_lookat(mat4_t *out, sm_camera_t const *self);
 
 #endif // CAMERA_H_

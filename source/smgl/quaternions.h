@@ -5,13 +5,13 @@
 #include "simd/quaternionf128.h"
 
 /* Quaternions are stored {w, i, j, k} as __m128 vectors (4 packed floats) */
-typedef union vec128f quat;
+typedef union vec128f quat_t;
 
-extern void quat_rotate(quat *out, quat const *q0, fvec const *axis, const float angle);
-extern void quat_inverse(quat *out, quat const *input);
-extern void quat_interpolate(quat *out, quat const*q0, quat const*q1, float interp_param); // slerp
+extern void quat_rotate(quat_t *out, quat_t const *q0, fvec_t const *axis, const float angle);
+extern void quat_inverse(quat_t *out, quat_t const *input);
+extern void quat_interpolate(quat_t *out, quat_t const*q0, quat_t const*q1, float interp_param); // slerp
 // rotate q0 around axis by angle and return mat4 representation of resultant quat
-extern void quat_rotate_mat4(mat4x4 *out, quat const *q0, fvec const *axis, float const angle);
+extern void quat_rotate_mat4(mat4_t *out, quat_t const *q0, fvec_t const *axis, float const angle);
 
 /* Primitve functions that aren't worth the overhead: */
 #define quat_mm_normalize(qout, qin)                                   \

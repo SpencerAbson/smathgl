@@ -3,9 +3,9 @@
 #include "matrices.h"
 #include "vectorf.h"
 
-extern void mat4_rotate(mat4x4 *out, mat4x4 const *input, fvec const* axis, float angle_rad);
-extern void mat4_perspective(mat4x4 *out, float angle_rad, float aspect_ratio, float near, float far);
-extern void mat4_lookat(mat4x4 *out, fvec const *position, fvec const *target, fvec const *up);
-extern void vec4_outer_product(mat4x4 *out, fvec const *input0,  fvec const *input1);
-extern void mat4_vec_product(fvec *out, mat4x4 const *mat, fvec const *vec);
+extern void mat4_rotate(mat4_t *out, mat4_t const *input, fvec_t const* axis, float angle_rad);
+extern void mat4_perspective(mat4_t *out, float angle_rad, float aspect_ratio, float near, float far);
+extern void mat4_lookat(mat4_t *out, fvec_t const *position, fvec_t const *target, fvec_t const *up);
+extern void vec4_outer_product(mat4_t *out, fvec_t const *input0,  fvec_t const *input1);
+extern void mat4_vec_product(fvec_t *out, mat4_t const *mat, fvec_t const *vec);
 #endif // SMATH_MATRIX_VECTOR_OP_H_

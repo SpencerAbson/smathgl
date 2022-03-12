@@ -4,7 +4,7 @@
 #include "matrices.h"
 
 
-void mat4_init_diagonal(mat4x4 *output, const float translator)
+void mat4_init_diagonal(mat4_t *output, const float translator)
 {
     output->sse_registers[0] = _mm_set_ps(0.0f, 0.0f, 0.0f, translator);
     output->sse_registers[1] = _mm_set_ps(0.0f, 0.0f, translator, 0.0f);
@@ -14,7 +14,7 @@ void mat4_init_diagonal(mat4x4 *output, const float translator)
 }
 
 
-void mat4_init_translation(mat4x4 *output, float x, float y, float z)
+void mat4_init_translation(mat4_t *output, float x, float y, float z)
 {
     output->sse_registers[0] = _mm_set_ps(x, 0.0f, 0.0f, 1.0f);
     output->sse_registers[1] = _mm_set_ps(y, 0.0f, 1.0f, 0.0f);
@@ -23,7 +23,7 @@ void mat4_init_translation(mat4x4 *output, float x, float y, float z)
 }
 
 
-void mat4_display(const mat4x4 *mat)
+void mat4_display(const mat4_t *mat)
 {
     for(uint32_t i = 0; i < 4; i++)
     {

@@ -11,7 +11,7 @@
 
 static void sm_update_camera_vectors(sm_camera_t *self)
 {
-    fvec new_front;
+    fvec_t new_front;
     fvec3_mm_init(new_front, cosf(SM_RADIANS(self->yaw)) * cosf(SM_RADIANS(self->pitch)),
                               sinf(SM_RADIANS(self->pitch)),
                               sinf(SM_RADIANS(self->yaw)) * cosf(SM_RADIANS(self->pitch)));
@@ -24,7 +24,7 @@ static void sm_update_camera_vectors(sm_camera_t *self)
 }
 
 
-sm_camera_t *sm_cam_create(fvec position, fvec up, float yaw, float pitch)
+sm_camera_t *sm_cam_create(fvec_t position, fvec_t up, float yaw, float pitch)
 {
     assert(position.size == 3 && up.size == 3);
     sm_camera_t *self = malloc(sizeof(sm_camera_t));
@@ -46,7 +46,7 @@ sm_camera_t *sm_cam_create(fvec position, fvec up, float yaw, float pitch)
 void sm_cam_process_keyboard(sm_camera_t *self, enum SmCameraDirection direction, float delta_time)
 {
     float velocity = self->movement_speed * delta_time; // displacement ?
-    fvec intermediate;
+    fvec_t intermediate;
 
     switch(direction)
     {
@@ -109,9 +109,9 @@ void sm_cam_process_scroll(sm_camera_t *self, float y_offset)
 }
 
 
-void sm_cam_lookat(mat4x4 *output, sm_camera_t const *self)
+void sm_cam_lookat(mat4_t *output, sm_camera_t const *self)
 {
-    fvec pos_front;
+    fvec_t pos_front;
     fvec_mm_add(pos_front, self->position, self->front);
     mat4_lookat(output, &self->position, &pos_front, &self->up);
 }

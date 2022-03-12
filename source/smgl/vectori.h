@@ -15,13 +15,13 @@ typedef union vec128i
 typedef struct ivec {
     union vec128i  data;
     uint32_t size;
-}ivec;
+}ivec_t;
 
 /* i32 composed vector functions  */
-extern void ivec_scale(ivec *out, ivec const *addr_in, int32_t scalar);
-extern int32_t ivec_dot(ivec const *input0, ivec const *input1); // compute dot product of 2 ivec2/3/4s
-extern int32_t ivec_min(ivec const *input);
-extern void ivec_display(ivec const *input);
+extern void ivec_scale(ivec_t *out, ivec_t const *addr_in, int32_t scalar);
+extern int32_t ivec_dot(ivec_t const *input0, ivec_t const *input1); // compute dot product of 2 ivec2/3/4s
+extern int32_t ivec_min(ivec_t const *input);
+extern void ivec_display(ivec_t const *input);
 /* Vector initers and primitive function macro wrappers */
 #define ivec4_mm_init(vec_out, x, y, z, w)      \
     (vec_out)->size = 4;                        \

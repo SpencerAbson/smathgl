@@ -10,11 +10,11 @@ typedef union mat4x4
 {
     SMGL_ALIGN_16 float values[4][4];
     __m128 sse_registers[4];
-}mat4x4;
+}mat4_t;
 
-extern void mat4_init_diagonal(mat4x4 *out, const float translator);
-extern void mat4_init_translation(mat4x4 *out, float x, float y, float z);
-extern void mat4_display(const mat4x4 *mat);
+extern void mat4_init_diagonal(mat4_t *out, const float translator);
+extern void mat4_init_translation(mat4_t *out, float x, float y, float z);
+extern void mat4_display(const mat4_t *mat);
 
 /* Primitve functions that aren't worth the overhead: */
 #define mat4_mm_mul(out, in0, in1)                 \
@@ -29,7 +29,7 @@ extern void mat4_display(const mat4x4 *mat);
 #define mat4_mm_transpose(out, in0)                \
     mat4xm128_transpose((in0).sse_registers, (out).sse_registers)
 
-static inline void mat4_clear(mat4x4 *input){
+static inline void mat4_clear(mat4_t *input){
     memset(input->values, 0, sizeof(float) * 16);
 }
 

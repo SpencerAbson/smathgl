@@ -15,13 +15,13 @@ typedef union vec128f
 typedef struct fvec {
     union vec128f  data;
     uint32_t size;
-}fvec;
+}fvec_t;
 
 /* f32 composed vector functions */
-extern float fvec_dot(fvec const *input0, fvec const *input1);  // compute dot product of 2 vec2/3/4se
-extern float fvec_min(fvec const *input);
-extern void  fvec_scale(fvec *out, fvec const *input, float scalar);
-extern void  fvec_display(fvec const *input);
+extern float fvec_dot(fvec_t const *input0, fvec_t const *input1);  // compute dot product of 2 vec2/3/4se
+extern float fvec_min(fvec_t const *input);
+extern void  fvec_scale(fvec_t *out, fvec_t const *input, float scalar);
+extern void  fvec_display(fvec_t const *input);
 
 /* vector initers and primitive functions  */
 #define fvec4_mm_init(vec_in, x, y, z, w)\
