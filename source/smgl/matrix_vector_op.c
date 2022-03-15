@@ -46,7 +46,7 @@ void mat4_rotate(mat4_t *output, mat4_t const *input, fvec_t const* axis, float 
     quat_mm_init(identity, 1.0f, 0.0f, 0.0f, 0.0f);
     mat4_t rotator;
     quat_rotate_mat4(&rotator, &identity, axis, angle_rad);
-    mat4_mm_mul(*output, *input, rotator);
+    mat4_mm_mul(*output, rotator, *input);
 }
 
 
