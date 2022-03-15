@@ -122,7 +122,7 @@ static inline __m128 quaternionf128_Nlerp(__m128 const q0, __m128 const q1, floa
 
 
 // integration from angular veclocity
-static inline __m128 quaternionf128_integrate(__m128 const q0, __m128 const omega, float delta_t) // omega is size 3
+static inline __m128 quaternionf128_integrate(__m128 const q0, __m128 const omega, float delta_t)
 {
     // q' = /\q q
     __m128 delta_q, s;
@@ -131,9 +131,13 @@ static inline __m128 quaternionf128_integrate(__m128 const q0, __m128 const omeg
     float theta_mag_sqr = vectorf128_dot(theta, theta);
 
     // set the lowest value in theta to 1.0f
+#if SMGL_INSTRSET > 4
+    theta = _mm_insert_ps(theta, tmp0, 0x0);
+#else
     __m128 tmp1 = _mm_unpackhi_ps(tmp0, theta);
     __m128 tmp2 = _mm_shuffle_ps(theta, theta, _MM_SHUFFLE(2, 0, 1, 3));
     theta       = _mm_unpacklo_ps(tmp1, tmp2); // theta = (1.0f , x, y, z);
+#endif
 
     if(theta_mag_sqr * theta_mag_sqr / 24.0f < 0.0006f) // it is appropriate to use taylor series approximation
                                                         // NOTE: best guard value not determined
