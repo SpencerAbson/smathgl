@@ -19,6 +19,13 @@ extern void quat_inverse(quat_t *out, quat_t const *input);
 extern void quat_interpolate(quat_t *out, quat_t const*q0, quat_t const*q1, float interp_param, QuatInterps_t interpolation_method);
 // rotate q0 around axis by angle and return mat4 representation of resultant quat
 extern void quat_rotate_set_mat4(mat4_t *out, quat_t const *q0, fvec_t const *axis, float  angle);
+
+static inline void quat_integrate(quat_t *out, quat_t const *q0, fvec_t const *omega, float delta_t)
+{
+    assert(omega->size == 3);
+    out->sse_register = quaternionf128_integrate(q0->sse_register, omega->data.sse_register, delta_t);
+}
+
 /* Primitve functions that aren't worth the overhead: */
 #define quat_mm_normalize(qout, qin)                                   \
     (qout).sse_register = vectorf128_normalize((qin).sse_register)
@@ -31,5 +38,6 @@ extern void quat_rotate_set_mat4(mat4_t *out, quat_t const *q0, fvec_t const *ax
 
 #define quat_mm_init(qout, w, x, y, z)              \
     (qout).sse_register = _mm_set_ps((z), (y), (x), (w))
+
 
 #endif // QUATERNIONS_H_

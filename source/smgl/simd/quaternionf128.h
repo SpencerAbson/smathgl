@@ -44,7 +44,7 @@ static inline __m128 quaternionf128_mul(__m128 a, __m128 b) // credit to Agner F
 }*/
 
 
-static inline __m128 quaternionf128_pure_rotate(__m128 original, __m128 rotation)
+static inline __m128 quaternionf128_pure_rotate(__m128 original, __m128 const rotation)
 {
     float angle, half_ang;
     _mm_store_ss(&angle, rotation);
@@ -61,7 +61,7 @@ static inline __m128 quaternionf128_pure_rotate(__m128 original, __m128 rotation
 }
 
 
-static inline __m128 quaternionf128_inverse(__m128 input)
+static inline __m128 quaternionf128_inverse(__m128 const input)
 {
     __m128 conjugator = _mm_set_ps(-1.0f, -1.0f, -1.0f, 1.0f); // q^-1 = q^* / |q|
     __m128 conjugated = _mm_mul_ps(input, conjugator); // negated vector component of quaternion
@@ -72,7 +72,7 @@ static inline __m128 quaternionf128_inverse(__m128 input)
 }
 
 
-static inline __m128 quaternionf128_slerp(__m128 input0, __m128 input1, float interp_param)
+static inline __m128 quaternionf128_slerp(__m128 const input0, __m128 const input1, float interp_param)
 {
     float theta, sin_theta;
     float cos_theta = vectorf128_dot(input0, input1);
@@ -135,7 +135,8 @@ static inline __m128 quaternionf128_integrate(__m128 const q0, __m128 const omeg
     __m128 tmp2 = _mm_shuffle_ps(theta, theta, _MM_SHUFFLE(2, 0, 1, 3));
     theta       = _mm_unpacklo_ps(tmp1, tmp2); // theta = (1.0f , x, y, z);
 
-    if(theta_mag_sqr * theta_mag_sqr / 24.0f < 0.35f) // it is appropriate to use taylor series approximation NOTE: best guard value not determined
+    if(theta_mag_sqr * theta_mag_sqr / 24.0f < 0.0006f) // it is appropriate to use taylor series approximation
+                                                        // NOTE: best guard value not determined
     {
         float ftmp = 1.0f - theta_mag_sqr / 6.0f;
         float w_component = 1.0f - theta_mag_sqr / 2.0f;
