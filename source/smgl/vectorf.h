@@ -36,7 +36,7 @@ extern void  fvec_display(fvec_t const *input);
     (vec_in).size = 2;\
     (vec_in).data.sse_register = _mm_set_ps((0.0f), (0.0f), (y), (x));
 
-/* Primitve functions that aren't worth the overhead: (trust me it makes a difference) */
+/* Primitve functions that aren't worth the overhead: (yes, macros with side-effects - how evil)*/
 #define fvec_mm_add(vec_out, v0, v1)            \
     assert((v0).size == (v1).size);             \
     (vec_out).size = (v0).size;                 \
@@ -57,12 +57,12 @@ extern void  fvec_display(fvec_t const *input);
     (vec_out).size = 3;                 \
     (vec_out).data.sse_register = vectorf128_cross((v0).data.sse_register, (v1).data.sse_register)
 
-#define fvec_mm_normalize(vec_out, v0)            \
-    assert((v0).size < 5 && (v0).size > 1);   \
-    (vec_out).size = (v0).size;                   \
+#define fvec_mm_normalize(vec_out, v0)          \
+    assert((v0).size < 5 && (v0).size > 1);     \
+    (vec_out).size = (v0).size;                 \
     (vec_out).data.sse_register = vectorf128_normalize((v0).data.sse_register)
 
-#define fvec_mm_reverse(vec_out, v0)               \
+#define fvec_mm_reverse(vec_out, v0)            \
     (vec_out).size = (v0).size;                 \
     (vec_out).data.sse_register = _mm_shuffle_ps((v0).data.sse_registerm, (v0).data.sse_register, _MM_SHUFFLE(0, 1, 2, 3));
 

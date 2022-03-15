@@ -4,15 +4,10 @@
 #include "..\..\..\include/platform.h"
 #include <smmintrin.h>
 
-#define STOREU_i32(mem_addr, vector)         \
-    _mm_store_ss((float*)(mem_addr), _mm_castsi128_ps((vector)))    \ // not all compilers have _mm_storeu_si32 as of 2022, but this works in gcc and msvc.
 
-
-static inline void v_storeu_i32(void* mem_addr, __m128i a) // not all compilers have _mm_storeu_epi32 as of 2022
-{
-    _mm_store_ss((float*)mem_addr, _mm_castsi128_ps(a));
-    return;
-}
+#define SMM_STOREU_SI32(mem_addr, vector)         \
+    _mm_store_ss((float*)(mem_addr), _mm_castsi128_ps((vector)))     // NOTE: not all compilers have _mm_storeu_si32 as of 2022,
+                                                                      // but this works in gcc and msvc.
 
 
 static inline __m128i v_mul_i32(__m128i input0, __m128i input1)
@@ -20,7 +15,7 @@ static inline __m128i v_mul_i32(__m128i input0, __m128i input1)
     // multiply two lower i32s and store in dst
     // shuffle upper two  i32s down to lower and mult again
     // shuffle the products back to the original position of what produced them
-    // return summed products
+    // return summed products NOTE: optimisations not yet considered
 
     __m128i v0 = _mm_mul_epi32(input0, input1);
     __m128i v1 = _mm_shuffle_epi32(input0, _MM_SHUFFLE(2, 3, 0, 1));
@@ -68,7 +63,7 @@ static inline int32_t vectori128_dot(__m128i input0, __m128i input1)
 {
     int32_t out;
     __m128i product = v_mul_i32(input0, input1);
-    v_storeu_i32(&out, vectori128_sum(product));
+    SMM_STOREU_SI32(&out, vectori128_sum(product));
 
     return out;
 }
@@ -76,7 +71,6 @@ static inline int32_t vectori128_dot(__m128i input0, __m128i input1)
 
 static inline __m128i vectori128_vector_dot(__m128i input0, __m128i input1)
 {
-
     __m128i product = v_mul_i32(input0, input1);
     return vectori128_sum(product);
 }

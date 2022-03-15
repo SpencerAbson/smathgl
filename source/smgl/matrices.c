@@ -33,6 +33,5 @@ void mat4_display(const mat4_t *mat)
             printf("%f ", mat->values[i][j]);
         }
     }
-    printf("]");
-    printf("\n");
+    printf("] \n");
 }

@@ -26,7 +26,7 @@ void quat_interpolate(quat_t *output, quat_t const *q0, quat_t const *q1, float 
 }
 
 
-void quat_rotate_mat4(mat4_t *output, quat_t const *q0, fvec_t const* axis, const float angle)
+void quat_rotate_set_mat4(mat4_t *output, quat_t const *q0, fvec_t const* axis, const float angle)
 {
     quat_t q_of_rotation;
     quat_rotate(&q_of_rotation, q0, axis, angle);

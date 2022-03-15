@@ -12,7 +12,6 @@ void mat4_perspective(mat4_t *out, float angle_rad, float aspect_ratio, float ne
     out->sse_registers[1] = _mm_set_ps(0.0f, 0.0f, 1.0f / tan_half_fov, 0.0f);
     out->sse_registers[2] = _mm_set_ps(-1.0f, -(far + near) / (far - near), 0.0f, 0.0f);
     out->sse_registers[3] = _mm_set_ps(0.0f, -(2 * far * near) / (far - near), 0.0f, 0.0f);
-    return;
 }
 
 
@@ -44,8 +43,9 @@ void mat4_rotate(mat4_t *output, mat4_t const *input, fvec_t const* axis, float 
     // generate quaternion rep of rotation by rotaing {1, 0, 0, 0} by input
     quat_t identity;
     quat_mm_init(identity, 1.0f, 0.0f, 0.0f, 0.0f);
+
     mat4_t rotator;
-    quat_rotate_mat4(&rotator, &identity, axis, angle_rad);
+    quat_rotate_set_mat4(&rotator, &identity, axis, angle_rad); // set a rotation matrix described by quaternion of rotation by angle and axis
     mat4_mm_mul(*output, rotator, *input);
 }
 

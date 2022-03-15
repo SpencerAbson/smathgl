@@ -5,7 +5,6 @@
 #include "..\..\include/platform.h"
 #include "simd/vectori128.h"
 
-/* will hold more complex functions using multiple built-up simd instructions (worth the overhead)*/
 
 int32_t ivec_dot(ivec_t const *input0, ivec_t const *input1)
 {
@@ -18,7 +17,7 @@ int32_t ivec_min(ivec_t const *input)
 {
     int32_t min;
     __m128i min_vec = vectori128_min(input->data.sse_register);
-    v_storeu_i32(&min, min_vec);
+    SMM_STOREU_SI32(&min, min_vec); // store lowest (positioned) value from min_vecm into min
 
     return min;
 }
