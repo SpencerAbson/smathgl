@@ -18,8 +18,8 @@ typedef struct ivec {
 }ivec_t;
 
 /* i32 composed vector functions  */
-extern void ivec_scale(ivec_t *out, ivec_t const *addr_in, int32_t scalar);
-extern int32_t ivec_dot(ivec_t const *input0, ivec_t const *input1); // compute dot product of 2 ivec2/3/4s
+extern void ivec_scale(ivec_t *out, ivec_t const *addr_in, int32_t scalar); // NOTE: macro def exists
+extern int32_t ivec_dot(ivec_t const *input0, ivec_t const *input1);
 extern int32_t ivec_min(ivec_t const *input);
 extern void ivec_display(ivec_t const *input);
 /* Vector initers and primitive function macro wrappers */
@@ -59,5 +59,8 @@ extern void ivec_display(ivec_t const *input);
     (vec_out).size = (v0).size;                 \
     (vec_out).data.sse_register = _mm_shuffle_epi32((v0).data.sse_registerm, _MM_SHUFFLE(0, 1, 2, 3));
 
+#define ivec_mm_scale(vec_out, v0, scalar)      \
+    (vec_out).size = (v0).size;                 \
+    (vec_out).data.sse_register = vectori128_scale((v0).data.sse_registerm, (scalar));
 
 #endif // SMATH_SMATH_VECTORI_H_

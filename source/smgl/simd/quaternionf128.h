@@ -93,4 +93,63 @@ static inline __m128 quaternionf128_squad_interpolate(__m128 q0, __m128 q1, __m1
 }
 
 
+static inline __m128 quaternionf128_Nlerp(__m128 const q0, __m128 const q1, float blend) // linear quaternion interpolation
+{
+    __m128 output;
+    const float dot     = vectorf128_dot(q0, q1);
+    const float blend_n = 1.0f - blend;
+
+    __m128 v_blend   = _mm_set_ps1(blend); // [blend, blend, blend, blend]
+    __m128 v_blend_n = _mm_set_ps1(blend_n);
+    if(dot < 0.0f)
+    {
+        __m128 neg_1 = vectorf128_scale(q1, -1.0f); // negated q1
+        __m128 tmp0  = _mm_mul_ps(v_blend_n, q0);
+        __m128 tmp1  = _mm_mul_ps(v_blend, neg_1);
+
+        output = _mm_add_ps(tmp0, tmp1);
+    }
+    else
+    {
+        __m128 tmp0  = _mm_mul_ps(v_blend_n, q0);
+        __m128 tmp1  = _mm_mul_ps(v_blend, q1);
+
+        output = _mm_add_ps(tmp0, tmp1);
+    }
+
+    return vectorf128_normalize(output);
+}
+
+
+// integration from angular veclocity
+static inline __m128 quaternionf128_integrate(__m128 const q0, __m128 const omega, float delta_t) // omega is size 3
+{
+    // q' = /\q q
+    __m128 delta_q, s;
+    __m128 tmp0   = _mm_set_ps1(1.0f);
+    __m128 theta = vectorf128_scale(omega, 0.5f * delta_t);
+    float theta_mag_sqr = vectorf128_dot(theta, theta);
+
+    // set the lowest value in theta to 1.0f
+    __m128 tmp1 = _mm_unpackhi_ps(tmp0, theta);
+    __m128 tmp2 = _mm_shuffle_ps(theta, theta, _MM_SHUFFLE(2, 0, 1, 3));
+    theta       = _mm_unpacklo_ps(tmp1, tmp2); // theta = (1.0f , x, y, z);
+
+    if(theta_mag_sqr * theta_mag_sqr / 24.0f < 0.35f) // it is appropriate to use taylor series approximation NOTE: best guard value not determined
+    {
+        float ftmp = 1.0f - theta_mag_sqr / 6.0f;
+        float w_component = 1.0f - theta_mag_sqr / 2.0f;
+        s = _mm_set_ps(ftmp, ftmp, ftmp, w_component);
+    }
+    else
+    {
+        float theta_mag = sqrtf(theta_mag_sqr);
+        float s_val = sinf(theta_mag) / theta_mag;
+        s = _mm_set_ps(s_val, s_val, s_val, cosf(theta_mag));
+    }
+
+    delta_q = _mm_mul_ps(theta, s);
+    return quaternionf128_mul(delta_q, q0);
+
+}
 #endif // QUATERNIONF128_H_

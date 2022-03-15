@@ -18,9 +18,9 @@ typedef struct fvec {
 }fvec_t;
 
 /* f32 composed vector functions */
-extern float fvec_dot(fvec_t const *input0, fvec_t const *input1);  // compute dot product of 2 vec2/3/4se
+extern float fvec_dot(fvec_t const *input0, fvec_t const *input1);
 extern float fvec_min(fvec_t const *input);
-extern void  fvec_scale(fvec_t *out, fvec_t const *input, float scalar);
+extern void  fvec_scale(fvec_t *out, fvec_t const *input, float scalar); // NOTE: macro version now exists
 extern void  fvec_display(fvec_t const *input);
 
 /* vector initers and primitive functions  */
@@ -28,13 +28,13 @@ extern void  fvec_display(fvec_t const *input);
     (vec_in).size = 4;\
     (vec_in).data.sse_register = _mm_set_ps((w), (z), (y), (x));
 
-#define fvec3_mm_init(vec_in, x, y, z)\
-    (vec_in).size = 3;\
-    (vec_in).data.sse_register = _mm_set_ps((0.0f), (z), (y), (x));
+#define fvec3_mm_init(vec_in, x, y, z)          \
+    (vec_in).size = 3;                          \
+    (vec_in).data.sse_register = _mm_set_ps(0.0f, (z), (y), (x));
 
-#define fvec2_mm_init(vec_in, x, y)\
-    (vec_in).size = 2;\
-    (vec_in).data.sse_register = _mm_set_ps((0.0f), (0.0f), (y), (x));
+#define fvec2_mm_init(vec_in, x, y)             \
+    (vec_in).size = 2;                          \
+    (vec_in).data.sse_register = _mm_set_ps(0.0f, 0.0f, (y), (x));
 
 /* Primitve functions that aren't worth the overhead: (yes, macros with side-effects - how evil)*/
 #define fvec_mm_add(vec_out, v0, v1)            \
@@ -52,9 +52,9 @@ extern void  fvec_display(fvec_t const *input);
     (vec_out).size = (v0).size;                 \
     (vec_out).data.sse_register = _mm_mul_ps((v0).data.sse_register, (v1).data.sse_register)
 
-#define fvec_mm_cross(vec_out, v0, v1)            \
+#define fvec_mm_cross(vec_out, v0, v1)          \
     assert((v0).size == (v1).size && (v0).size == 3);             \
-    (vec_out).size = 3;                 \
+    (vec_out).size = 3;                         \
     (vec_out).data.sse_register = vectorf128_cross((v0).data.sse_register, (v1).data.sse_register)
 
 #define fvec_mm_normalize(vec_out, v0)          \
@@ -66,4 +66,19 @@ extern void  fvec_display(fvec_t const *input);
     (vec_out).size = (v0).size;                 \
     (vec_out).data.sse_register = _mm_shuffle_ps((v0).data.sse_registerm, (v0).data.sse_register, _MM_SHUFFLE(0, 1, 2, 3));
 
+#define fvec_mm_floor(vec_out, v0)              \
+    (vec_out).size = (v0).size;                 \
+    (vec_out).data.sse_register = vectorf128_floor((v0).data.sse_register);
+
+#define fvec_mm_ceil(vec_out, v0)               \
+    (vec_out).size = (v0).size;                 \
+    (vec_out).data.sse_register = vectorf128_ceil((v0).data.sse_register);
+
+#define fvec_mm_round(vec_out, v0)              \
+    (vec_out).size = (v0).size;                 \
+    (vec_out).data.sse_register = vectorf128_round((v0).data.sse_register);
+
+#define fvec_mm_scale(vec_out, v0, scalar)      \
+    (vec_out).size = (v0).size;                 \
+    (vec_out).data.sse_register = vectorf128_scale((v0).data.sse_register, (scalar));
 #endif // SMATH_VECTORF_H_

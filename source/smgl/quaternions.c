@@ -18,11 +18,21 @@ void quat_rotate(quat_t *output, quat_t const *q0, fvec_t const *axis, float ang
 }
 
 
-void quat_interpolate(quat_t *output, quat_t const *q0, quat_t const *q1, float interp_param)
+void quat_interpolate(quat_t *output, quat_t const *q0, quat_t const *q1, float interp_param, QuatInterps_t type)
 {
     assert(interp_param > 0.0f && interp_param < 1.0f);
-    output->sse_register = quaternionf128_slerp(q0->sse_register, q1->sse_register, interp_param);
-    return;
+    switch(type)
+    {
+        case SM_QUAT_NLERP:
+            output->sse_register = quaternionf128_Nlerp(q0->sse_register, q1->sse_register, interp_param);
+            break;
+        case SM_QUAT_SLERP:
+            output->sse_register = quaternionf128_slerp(q0->sse_register, q1->sse_register, interp_param);
+            // FIXME: squad not finished
+            break;
+        default:
+            return;
+    }
 }
 
 
