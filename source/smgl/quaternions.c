@@ -7,7 +7,7 @@
 #include "matrices.h"
 
 
-void quat_rotate(quat_t *output, quat_t const *q0, fvec_t const *axis, const float angle)
+void quat_rotate(quat_t *output, quat_t const *q0, fvec_t const *axis, float angle)
 {
     assert(axis->size == 3);
     __m128 q_of_rotation = _mm_set_ps(axis->data.values[2], axis->data.values[1],  // replace with shuffle
@@ -18,11 +18,10 @@ void quat_rotate(quat_t *output, quat_t const *q0, fvec_t const *axis, const flo
 }
 
 
-void quat_interpolate(quat_t *output, quat_t const*q0, quat_t const *q1, float interp_param)
+void quat_interpolate(quat_t *output, quat_t const *q0, quat_t const *q1, float interp_param)
 {
     assert(interp_param > 0.0f && interp_param < 1.0f);
     output->sse_register = quaternionf128_slerp(q0->sse_register, q1->sse_register, interp_param);
-
     return;
 }
 

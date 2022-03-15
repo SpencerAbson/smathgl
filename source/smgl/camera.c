@@ -26,7 +26,7 @@ static void sm_update_camera_vectors(sm_camera_t *self)
 
 sm_camera_t *sm_cam_create(fvec_t position, fvec_t up, float yaw, float pitch)
 {
-    assert(position.size == 3 && up.size == 3);
+    assert(position.size == 3 && up.size == 3); // FIXME: 0 magnitude up will lead to normalization error, consider catching this.
     sm_camera_t *self = malloc(sizeof(sm_camera_t));
     self->position = position;
     self->world_up = up;

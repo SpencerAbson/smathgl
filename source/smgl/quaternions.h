@@ -11,7 +11,7 @@ extern void quat_rotate(quat_t *out, quat_t const *q0, fvec_t const *axis, const
 extern void quat_inverse(quat_t *out, quat_t const *input);
 extern void quat_interpolate(quat_t *out, quat_t const*q0, quat_t const*q1, float interp_param); // slerp
 // rotate q0 around axis by angle and return mat4 representation of resultant quat
-extern void quat_rotate_mat4(mat4_t *out, quat_t const *q0, fvec_t const *axis, float const angle);
+extern void quat_rotate_mat4(mat4_t *out, quat_t const *q0, fvec_t const *axis, float  angle);
 /* Primitve functions that aren't worth the overhead: */
 #define quat_mm_normalize(qout, qin)                                   \
     (qout).sse_register = vectorf128_normalize((qin).sse_register)
