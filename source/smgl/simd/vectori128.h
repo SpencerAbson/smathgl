@@ -4,6 +4,9 @@
 #include "..\..\..\include/platform.h"
 #include <smmintrin.h>
 
+#define STOREU_i32(mem_addr, vector)         \
+    _mm_store_ss((float*)(mem_addr), _mm_castsi128_ps((vector)))    \ // not all compilers have _mm_storeu_si32 as of 2022, but this works in gcc and msvc.
+
 
 static inline void v_storeu_i32(void* mem_addr, __m128i a) // not all compilers have _mm_storeu_epi32 as of 2022
 {

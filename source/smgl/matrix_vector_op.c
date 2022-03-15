@@ -44,11 +44,8 @@ void mat4_rotate(mat4_t *output, mat4_t const *input, fvec_t const* axis, float 
     // generate quaternion rep of rotation by rotaing {1, 0, 0, 0} by input
     quat_t identity;
     quat_mm_init(identity, 1.0f, 0.0f, 0.0f, 0.0f);
-    fvec_t normed_axis;
-    fvec_mm_normalize(normed_axis, *axis);
     mat4_t rotator;
-    quat_rotate_mat4(&rotator, &identity, &normed_axis, angle_rad);
-
+    quat_rotate_mat4(&rotator, &identity, axis, angle_rad);
     mat4_mm_mul(*output, *input, rotator);
 }
 
@@ -71,17 +68,41 @@ void mat4_vec_product(fvec_t *output, mat4_t const *mat, fvec_t const *vec)
 }
 
 
-void mat4_euler_rotation(mat4_t *rotation_matrix, float angle, fvec_t *unit_vector) // note angle in radians
+void mat4_set_euler_rotation(mat4_t *rotation_matrix, float angle, fvec_t *unit_vector) // note angle in radians
 {
     assert(unit_vector->size == 3);
     const float cos_a = cosf(angle);
-    const float sin_a = sinf(angle);
-    const float cos_a_n_1 = 1.0f - cos_a;
+    register const float sin_a = sinf(angle);
+    register const float cos_a_n_1 = 1.0f - cos_a;
+
     const float u_x2 = powf(unit_vector->data.values[0], 2);
     const float u_y2 = powf(unit_vector->data.values[1], 2);
     const float u_z2 = powf(unit_vector->data.values[2], 2);
 
-    // Euler rotation matrix
+    // eular rotation matrix values
+    const float v0n = (unit_vector->data.values[0] * unit_vector->data.values[1] * cos_a_n_1) - (unit_vector->data.values[2] * sin_a);
+    const float v0p = (unit_vector->data.values[0] * unit_vector->data.values[1] * cos_a_n_1) + (unit_vector->data.values[2] * sin_a);
+    const float v1n = (unit_vector->data.values[1] * unit_vector->data.values[2] * cos_a_n_1) - (unit_vector->data.values[0] * sin_a);
+    const float v1p = (unit_vector->data.values[2] * unit_vector->data.values[1] * cos_a_n_1) + (unit_vector->data.values[0] * sin_a);
+    const float v2n = (unit_vector->data.values[2] * unit_vector->data.values[0] * cos_a_n_1) - (unit_vector->data.values[1] * sin_a);
+    const float v2p = (unit_vector->data.values[0] * unit_vector->data.values[2] * cos_a_n_1) + (unit_vector->data.values[1] * sin_a);
+
+    rotation_matrix->sse_registers[0] = _mm_set_ps(0.0f, v2n, v0p, cos_a + (u_x2 * (1 - cos_a))); // NOTE: reverse order for _mm_set_ps
+    rotation_matrix->sse_registers[1] = _mm_set_ps(0.0f, v1p, cos_a + (u_y2 * (cos_a_n_1)), v0n);
+    rotation_matrix->sse_registers[2] = _mm_set_ps(0.0f, cos_a + (u_z2 * (cos_a_n_1)), v1n, v2p);
+    rotation_matrix->sse_registers[3] = _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f);
+
+}
+
+
+/*
+**  out.values[0][0] = 1 / (aspect_ratio * tan_half_fov);
+    out.values[1][1] = 1 / tan_half_fov;
+    out.values[2][2] = -(far + near) / (far - near);
+    out.values[2][3] = -1;
+    out.values[3][2] = -(2 * far * near) / (far - near);
+**
+
     rotation_matrix->values[0][0] = cos_a + (u_x2 * (1 - cos_a));
     rotation_matrix->values[1][0] = (unit_vector->data.values[0] * unit_vector->data.values[1] * cos_a_n_1) - (unit_vector->data.values[2] * sin_a);
     rotation_matrix->values[2][0] = (unit_vector->data.values[0] * unit_vector->data.values[2] * cos_a_n_1) + (unit_vector->data.values[1] * sin_a);
@@ -98,13 +119,4 @@ void mat4_euler_rotation(mat4_t *rotation_matrix, float angle, fvec_t *unit_vect
     rotation_matrix->values[3][1] = 0.0f;
     rotation_matrix->values[3][2] = 0.0f;
     rotation_matrix->values[3][3] = 1.0f;
-}
-
-/*
-**    out.values[0][0] = 1 / (aspect_ratio * tan_half_fov);
-    out.values[1][1] = 1 / tan_half_fov;
-    out.values[2][2] = -(far + near) / (far - near);
-    out.values[2][3] = -1;
-    out.values[3][2] = -(2 * far * near) / (far - near);
-**
 */
