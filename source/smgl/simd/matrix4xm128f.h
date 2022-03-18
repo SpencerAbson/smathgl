@@ -4,7 +4,6 @@
 #include "..\..\..\include/platform.h"
 #include "vectorf128.h"
 
-#if SMGL_INSTRSET > 2
 
 static inline __m128 mat4xm128_vec4_product(const __m128 mat[4], __m128 vec)
 {
@@ -134,5 +133,4 @@ static inline void mat4xm128_mul(const __m128 input0[4], const __m128 input1[4],
 }
 
 
-#endif
 #endif // MATRIX4XM128F_H_

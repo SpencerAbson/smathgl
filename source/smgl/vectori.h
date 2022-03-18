@@ -24,16 +24,16 @@ extern int32_t ivec_min(ivec_t const *input);
 extern void ivec_display(ivec_t const *input);
 /* Vector initers and primitive function macro wrappers */
 #define ivec4_mm_init(vec_out, x, y, z, w)      \
-    (vec_out)->size = 4;                        \
-    (vec_out)->data.sse_register = _mm_set_epi32((w), (z), (y), (x));
+    (vec_out).size = 4;                        \
+    (vec_out).data.sse_register = _mm_set_epi32((w), (z), (y), (x));
 
 #define ivec3_mm_init(vec_out, x, y, z)         \
-    (vec_out)->size = 3;                        \
-    (vec_out)->data.sse_register = _mm_set_epi32(0, (z), (y), (x));
+    (vec_out).size = 3;                        \
+    (vec_out).data.sse_register = _mm_set_epi32(0, (z), (y), (x));
 
 #define ivec2_mm_init(vec_out, x, y)            \
-    (vec_out)->size = 2;                        \
-    (vec_out)->data.sse_register = _mm_set_epi32(0, 0, (y), (x))
+    (vec_out).size = 2;                        \
+    (vec_out).data.sse_register = _mm_set_epi32(0, 0, (y), (x))
 
 #define ivec_mm_add(vec_out, v0, v1)            \
     assert((v0).size == (v1).size);             \

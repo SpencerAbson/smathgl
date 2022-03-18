@@ -5,7 +5,7 @@
 #include "..\..\..\include/platform.h"
 
 
-static inline __m128 vectorf128_cross(__m128 input0, __m128 input1)
+static inline __m128 vectorf128_cross(__m128 const input0, __m128 const input1)
 {
     __m128 a, b,  v1, v2; // cross product can be computed by (y1, z1, x1) * (z2, x2, y2) - (z1, x1, y1) * (y2, z2, x2 )
     a = _mm_shuffle_ps(input0, input0, _MM_SHUFFLE(3, 0, 2, 1)); // a = (y1, z1, x1)
@@ -20,11 +20,12 @@ static inline __m128 vectorf128_cross(__m128 input0, __m128 input1)
 }
 
 
-static inline __m128 vectorf128_sum(__m128 input)
+static inline __m128 vectorf128_sum(__m128 const input)
 {
-    input = _mm_hadd_ps(input, input);
-    input = _mm_hadd_ps(input, input);
-    return input;
+    __m128 tmp;
+    tmp = _mm_hadd_ps(input, input);
+    tmp = _mm_hadd_ps(tmp, tmp);
+    return tmp;
 }
 
 
@@ -41,7 +42,8 @@ static inline __m128 vectorf128_round(__m128 const input)
 {
 #if SMGL_INSTRSET > 4 // _mm_round_ps from SSE 4.1
     return _mm_round_ps(input, _MM_FROUND_TO_NEAREST_INT);
-#else                              // based on http://dss.stephanierct.com/DevBlog/?p=8 - edited to remove dogdy casting (cause of -ve input error)
+#else                              // based on http://dss.stephanierct.com/DevBlog/?p=8
+                                   // - edited to remove dogdy casting (cause of range value input error)
     __m128 v0 = _mm_setzero_ps();
     __m128 v1 = _mm_cmpeq_ps(v0, v0);
     __m128i tmp = _mm_castps_si128(v1);
@@ -49,12 +51,13 @@ static inline __m128 vectorf128_round(__m128 const input)
     tmp = _mm_srli_epi32(tmp, 2);
     __m128 v_nearest = _mm_castsi128_ps(tmp);
     __m128i i = _mm_cvttps_epi32(input);
-    __m128 a_trunc = _mm_cvtepi32_ps(i);    // truncation
-    __m128 rmd0 = _mm_sub_ps(input, a_trunc);  // get remainder
+    __m128 a_trunc = _mm_cvtepi32_ps(i);
+    __m128 rmd0 = _mm_sub_ps(input, a_trunc);
     __m128 rmd1 = _mm_mul_ps(rmd0, v_nearest);
     __m128i rmd1i = _mm_cvttps_epi32(rmd1);
 
-    __m128 conv_rmd_trunc = _mm_cvtepi32_ps(rmd1i); // back to __m128
+    // back to m128
+    __m128 conv_rmd_trunc = _mm_cvtepi32_ps(rmd1i);
     __m128 r = _mm_add_ps(a_trunc, conv_rmd_trunc);
     return r;
 
@@ -86,7 +89,7 @@ static inline __m128 vectorf128_floor(__m128 const input)
 #if SMGL_INSTRSET > 4 // _mm_floor_ps from SSE 4.1
     return _mm_floor_ps(input);
 #else
-    __m128i v0 = _mm_setzero_si128();   // based on http://dss.stephanierct.com/DevBlog/?p=8
+    __m128i v0 = _mm_setzero_si128();
     __m128i v1 = _mm_cmpeq_epi32(v0, v0);
     __m128i ji = _mm_srli_epi32(v1, 25);
     __m128i tmp = _mm_slli_epi32(ji, 23);
@@ -105,12 +108,15 @@ static inline float vectorf128_dot(__m128 const input0, __m128 const input1)
 {
     float out;
     __m128 tmp;
-     tmp = _mm_mul_ps(input0, input1);
-     tmp = _mm_add_ps(_mm_movehl_ps(tmp, tmp), tmp);
-     tmp = _mm_add_ss(_mm_shuffle_ps(tmp, tmp, 1), tmp) ;
-
-    _mm_store_ss(&out, tmp);
-    return out;
+#if SMGL_INSTRSET > 4
+    tmp = _mm_dp_ps(input0, input1, 0xff);
+#else  // lightning fast alternative
+    tmp = _mm_mul_ps(input0, input1);
+    tmp = _mm_add_ps(_mm_movehl_ps(tmp, tmp), tmp);
+    tmp = _mm_add_ss(_mm_shuffle_ps(tmp, tmp, 1), tmp);
+#endif
+     _mm_store_ss(&out, tmp);
+     return out;
 }
 
 
