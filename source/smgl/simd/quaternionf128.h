@@ -46,13 +46,14 @@ static inline __m128 quaternionf128_mul(__m128 a, __m128 b) // credit to Agner F
 
 static inline __m128 quaternionf128_pure_rotate(__m128 const original, __m128 const rotation)
 {
-    float angle, half_ang;
+    float angle;
     _mm_store_ss(&angle, rotation);
-    half_ang = angle / 2.0f;
+    float const half_ang = angle / 2.0f;
+    float const sin_hang = sinf(half_ang);
 
     __m128 temp           = _mm_set_ss(angle - 1.0f);  // so that we get 1.0, x, y, z when we do next line
     __m128 local_rotation = _mm_sub_ps(rotation, temp);
-    __m128 transform      = _mm_set_ps(sinf(half_ang), sinf(half_ang), sinf(half_ang), cosf(half_ang));
+    __m128 transform      = _mm_set_ps(sin_hang, sin_hang, sin_hang, cosf(half_ang));
 
     local_rotation = _mm_mul_ps(local_rotation, transform); // q of rotation
     temp           = quaternionf128_mul(local_rotation, original);
@@ -75,7 +76,7 @@ static inline __m128 quaternionf128_inverse(__m128 const input)
 static inline __m128 quaternionf128_slerp(__m128 const input0, __m128 const input1, float interp_param)
 {
     float theta, sin_theta;
-    float cos_theta = vectorf128_dot(input0, input1);
+    const float cos_theta = vectorf128_dot(input0, input1);
 
     theta = acosf(cos_theta);
     sin_theta = sqrtf(1.0f - cos_theta * cos_theta);
@@ -99,8 +100,8 @@ static inline __m128 quaternionf128_Nlerp(__m128 const q0, __m128 const q1, floa
     const float dot     = vectorf128_dot(q0, q1);
     const float blend_n = 1.0f - blend;
 
-    __m128 v_blend   = _mm_set_ps1(blend); // [blend, blend, blend, blend]
-    __m128 v_blend_n = _mm_set_ps1(blend_n);
+    __m128 v_blend   = _mm_load_ss(&blend); // [blend, blend, blend, blend]
+    __m128 v_blend_n = _mm_load_ss(&blend_n);
     if(dot < 0.0f)
     {
         __m128 neg_1 = vectorf128_scale(q1, -1.0f); // negated q1
@@ -126,9 +127,9 @@ static inline __m128 quaternionf128_integrate(__m128 const q0, __m128 const omeg
 {
     // q' = /\q q
     __m128 delta_q, s;
-    __m128 tmp0   = _mm_set_ps1(1.0f);
+    __m128 tmp0  = _mm_set_ps1(1.0f);
     __m128 theta = vectorf128_scale(omega, 0.5f * delta_t);
-    float theta_mag_sqr = vectorf128_dot(theta, theta);
+    const float theta_mag_sqr = vectorf128_dot(theta, theta);
 
     // set the lowest value in theta to 1.0f
 #if SMGL_INSTRSET > 4

@@ -13,6 +13,14 @@ float fvec_dot(fvec_t const *input0, fvec_t const *input1)
 }
 
 
+void fvec_scale(fvec_t *output, fvec_t const *input, float scalar)
+{
+    __m128 scaling_vec = _mm_set_ps1(scalar);
+    output->size = input->size;
+    output->data.sse_register = _mm_mul_ps(input->data.sse_register, scaling_vec);
+}
+
+
 float fvec_min(fvec_t const *input)
 {
     float min;
@@ -26,6 +34,6 @@ void fvec_display(fvec_t const *input)
 {
     printf("[ ");
     for(uint32_t i = 0; i < input->size; i++)
-        printf("%6.4f ", input->data.values[i]);
+        printf("%4.3f ", input->data.values[i]);
     printf(" ]");
 }

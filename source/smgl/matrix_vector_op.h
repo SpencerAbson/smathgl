@@ -7,7 +7,6 @@ extern void mat4_rotate(mat4_t *out, mat4_t const *input, fvec_t const* axis, fl
 extern void mat4_perspective(mat4_t *out, float angle_rad, float aspect_ratio, float near, float far);
 extern void mat4_lookat(mat4_t *out, fvec_t const *position, fvec_t const *target, fvec_t const *up);
 extern void mat4_set_euler_rotation(mat4_t *rotation_matrix, float angle, fvec_t *unit_vector);
-extern void quat_rotate_set_mat4_pure_simd(mat4_t *output, quat_t const *q0, fvec_t const* axis, const float angle); // for testing
 
 static inline void vec4_outer_product(mat4_t *output, fvec_t const *input0,  fvec_t const *input1)
 {

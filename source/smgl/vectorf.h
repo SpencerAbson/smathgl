@@ -52,6 +52,10 @@ extern void  fvec_display(fvec_t const *input);
     (vec_out).size = (v0).size; \
     (vec_out).data.sse_register = _mm_mul_ps((v0).data.sse_register, (v1).data.sse_register); \
 
+// still 1.5x slower than scalar unfortunately.
+#define fvec_mm_dot(v0, v1)                     \
+    vectorf128_dot((v0).data.sse_register, (v1).data.sse_register)
+
 #define fvec_mm_cross(vec_out, v0, v1)          \
     assert((v0).size == (v1).size && (v0).size == 3);             \
     (vec_out).size = 3;                         \
@@ -85,5 +89,5 @@ extern void  fvec_display(fvec_t const *input);
     (vec_out).size = (v0).size;                 \
     (vec_out).data.sse_register = vectorf128_scale((v0).data.sse_register, (scalar));
 
-#define fvec_mm_dot(v0, v1) vectorf128_dot((v0).sse_register, (v1).sse_register)
+
 #endif // SMATH_VECTORF_H_

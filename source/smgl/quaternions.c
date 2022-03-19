@@ -10,7 +10,7 @@
 void quat_rotate(quat_t *output, quat_t const *q0, fvec_t const *axis, float angle)
 {
     assert(axis->size == 3);
-    __m128 q_of_rotation = _mm_set_ps(axis->data.values[2], axis->data.values[1],  // replace with shuffle
+    __m128 q_of_rotation =  _mm_set_ps(axis->data.values[2], axis->data.values[1],  // replace with shuffle
                                       axis->data.values[0], angle); // w, x, y, z
 
     output->sse_register = quaternionf128_pure_rotate(q0->sse_register, q_of_rotation);
@@ -28,6 +28,7 @@ void quat_interpolate(quat_t *output, quat_t const *q0, quat_t const *q1, float 
             break;
         case SM_QUAT_SLERP:
             output->sse_register = quaternionf128_slerp(q0->sse_register, q1->sse_register, interp_param);
+            break;
         case SM_QUAT_SQUAD:
             // FIXME: squad not finished
             break;
@@ -57,6 +58,7 @@ void quat_rotate_set_mat4(mat4_t *output, quat_t const *q0, fvec_t const* axis, 
     output->sse_registers[2] = _mm_set_ps(0.0f, 1.0f - double_x_sqr - double_y_sqr, v2n, v1p);
     output->sse_registers[3] = _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f);
 }
+
 
 
 #if SMGL_INSTRSET > 4
