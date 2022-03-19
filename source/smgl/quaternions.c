@@ -28,6 +28,7 @@ void quat_interpolate(quat_t *output, quat_t const *q0, quat_t const *q1, float 
             break;
         case SM_QUAT_SLERP:
             output->sse_register = quaternionf128_slerp(q0->sse_register, q1->sse_register, interp_param);
+        case SM_QUAT_SQUAD:
             // FIXME: squad not finished
             break;
         default:
@@ -58,56 +59,24 @@ void quat_rotate_set_mat4(mat4_t *output, quat_t const *q0, fvec_t const* axis, 
 }
 
 
-/*void quat_rotate_set_mat4_optimised(mat4_t *output, quat_t const *q0, fvec_t const* axis, const float angle)
-{
-    quat_t q_of_rotation;
-    quat_rotate(&q_of_rotation, q0, axis, angle);
-    const float double_x_sqr = 2.0f * q_of_rotation.values[1] * q_of_rotation.values[1];
-    const float double_y_sqr = 2.0f * q_of_rotation.values[2] * q_of_rotation.values[2];
-    const float double_z_sqr = 2.0f * q_of_rotation.values[3] * q_of_rotation.values[3];
-
-    // savior can be optimised
-    __m128 savior = _mm_set_ps(0.0f, 1.0f - double_x_sqr - double_y_sqr, 1.0f - double_x_sqr - double_z_sqr, 1.0f - double_y_sqr - double_z_sqr);
-    __m128 fill_2 = _mm_set_ps1(2.0f);
-
-    __m128 tmp0 = _mm_shuffle_ps(q_of_rotation.sse_register, q_of_rotation.sse_register, _MM_SHUFFLE(2, 2, 1, 0));
-    __m128 tmp1 = _mm_shuffle_ps(q_of_rotation.sse_register, q_of_rotation.sse_register, _MM_SHUFFLE(1, 0, 0, 2));
-
-    __m128 comp0 = _mm_mul_ps(tmp0, tmp1);
-
-    __m128 tmp3 = _mm_shuffle_ps(q_of_rotation.sse_register, q_of_rotation.sse_register, _MM_SHUFFLE(3, 3, 3, 3));
-    __m128 tmp4 = _mm_shuffle_ps(tmp0, tmp0, _MM_SHUFFLE(0, 1, 2, 3)); // reverse tmp0
-
-    __m128 comp1 = _mm_mul_ps(tmp3, tmp4);
-    comp1 = _mm_mul_ps(comp1, fill_2);
-
-    __m128 vps = _mm_add_ps(comp0, comp1);
-    __m128 vns = _mm_sub_ps(comp0, comp1);
-
-    //output->sse_registers[0] = _mm_shuffle_ps()
-
-    //vps        = _mm_mul_ps(vps, fill_2_p);
-
-    //output->sse_registers[0] = _mm_set_ps(0.0f, v1n, v0p, 1.0f - double_y_sqr - double_z_sqr);
-    //output->sse_registers[1] = _mm_set_ps(0.0f, v2p, 1.0f - double_x_sqr - double_z_sqr, v0n);
-    //output->sse_registers[2] = _mm_set_ps(0.0f, 1.0f - double_x_sqr - double_y_sqr, v2n, v1p);
-    //output->sse_registers[3] = _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f);
-    }*/
-
-// work in progress....
-void quat_rotate_set_mat4_optimised(mat4_t *output, quat_t const *q0, fvec_t const* axis, const float angle)
+#if SMGL_INSTRSET > 4
+/* This turns out to be incredibly difficult to do in SIMD, and boasts little performance gain.
+ * This ugly mess does the same thing as above. */
+void quat_rotate_set_mat4_pure_simd(mat4_t *output, quat_t const *q0, fvec_t const* axis, const float angle)
 {
     quat_t q_of_rotation;
     quat_rotate(&q_of_rotation, q0, axis, angle);
 
-    __m128 fill_1f  = _mm_set_ps1(1.0f);
-    __m128 fill_2f  = _mm_set_ps1(2.0f); // tmp0 looks like [double_w_sqr, double_x_sqr, double_y_sqr, double_z_sqr]
-    __m128 tmp0     = _mm_mul_ps(_mm_mul_ps(q_of_rotation.sse_register, q_of_rotation.sse_register), fill_2f);
+    __m128 fill_0f = _mm_set_ps1(0.0f);
+    __m128 fill_1f = _mm_set_ps1(1.0f);
+    __m128 fill_2f = _mm_set_ps1(2.0f); // tmp0 looks like [double_w_sqr, double_x_sqr, double_y_sqr, double_z_sqr]
+    __m128 tmp0    = _mm_mul_ps(_mm_mul_ps(q_of_rotation.sse_register, q_of_rotation.sse_register), fill_2f);
     tmp0 = _mm_shuffle_ps(tmp0, tmp0, _MM_SHUFFLE(2, 2, 1, 0));
 
     __m128 tmp1 = _mm_sub_ps(fill_1f, tmp0);
-    __m128 savior = _mm_sub_ps(tmp1, _mm_shuffle_ps(tmp1, tmp1, _MM_SHUFFLE(1, 0, 0, 0))); // (we know all values are +ve so we don't need to worry about order of subtraction)
+    __m128 savior = _mm_sub_ps(tmp1, _mm_shuffle_ps(tmp1, tmp1, _MM_SHUFFLE(1, 0, 0, 0)));
     // savior = [1 - double_x_sqr - double_y_sqr, 1 - double_x_sqr - double_z_sqr, 1 - double_y_sqr - double_z_sqr, 1 - 4_z_sqr]
+    savior = _mm_insert_ps(savior, fill_0f, 0x30);
 
     __m128 tmp2 = _mm_shuffle_ps(q_of_rotation.sse_register, q_of_rotation.sse_register, _MM_SHUFFLE(2, 2, 1, 0));
     __m128 tmp3 = _mm_shuffle_ps(q_of_rotation.sse_register, q_of_rotation.sse_register, _MM_SHUFFLE(1, 0, 0, 2));
@@ -121,19 +90,17 @@ void quat_rotate_set_mat4_optimised(mat4_t *output, quat_t const *q0, fvec_t con
     __m128 comp1 = _mm_mul_ps(tmp4, tmp5);
     comp1 = _mm_mul_ps(comp1, fill_2f);
 
-    __m128 vps = _mm_add_ps(comp0, comp1);
-    __m128 vns = _mm_sub_ps(comp0, comp1);
+    __m128 vs_1 = _mm_addsub_ps(comp0, comp1);
+    __m128 vs_2 = _mm_addsub_ps(comp1, comp0);
 
-    //__m128 vs_1 = _mm_addsub_ps(comp0, comp1);
-    //__m128 vs_2 = _mm_addsub_ps(comp1, comp0);
+    output->sse_registers[0] = _mm_shuffle_ps(vs_1, savior, _MM_SHUFFLE(1, 0, 3, 2)); // yz, 4w, v0p, v1n
+    output->sse_registers[0] = _mm_shuffle_ps(output->sse_registers[0], output->sse_registers[0], _MM_SHUFFLE(3, 1, 0, 2)); // correct
 
-    output->sse_registers[0] =  _mm_shuffle_ps(vns, vps, _MM_SHUFFLE(0, 3, 2, 0));
-    //_mm_insert_ps(output->sse_registers[0], savior, )
+    __m128 a0 = _mm_shuffle_ps(vs_1, vs_2, _MM_SHUFFLE(3, 2, 1, 0)); // could still help us
+    output->sse_registers[1] = _mm_unpacklo_ps(a0, savior); // [v0n, xz, v2p, 0]
 
-    // need to combine savior with vsss
-    // could do row major and then transpose?
-
-
-
-
+    output->sse_registers[2] = _mm_shuffle_ps(vs_2, savior, _MM_SHUFFLE(2, 1, 0, 3));
+    output->sse_registers[3] = _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f);
 }
+
+#endif

@@ -125,8 +125,10 @@ static inline __m128 vectorf128_vector_dot(__m128 const input0, __m128 const inp
 #if SMGL_INSTRSET > 4
     return _mm_dp_ps(input0, input1, 0xff);
 #endif
-    __m128 product = _mm_mul_ps(input0, input1);
-    return vectorf128_sum(product);
+    __m128 tmp = _mm_mul_ps(input0, input1);
+    tmp = _mm_add_ps(_mm_movehl_ps(tmp, tmp), tmp);
+    tmp = _mm_add_ss(_mm_shuffle_ps(tmp, tmp, 1), tmp);
+    return tmp;
 }
 
 
@@ -140,7 +142,7 @@ static inline __m128 vectorf128_normalize(__m128 const input)
 
 static inline __m128 vectorf128_scale(__m128 const input, float scalar)
 {
-    __m128 scaling_vec = _mm_load_ps1(&scalar);
+    __m128 scaling_vec = _mm_set_ps1(scalar);
     return _mm_mul_ps(input, scaling_vec);
 }
 
