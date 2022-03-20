@@ -18,10 +18,10 @@ typedef struct ivec {
 }ivec_t;
 
 /* i32 composed vector functions  */
-extern void ivec_scale(ivec_t *out, ivec_t const *addr_in, int32_t scalar); // NOTE: macro def exists
-extern int32_t ivec_dot(ivec_t const *input0, ivec_t const *input1);
+extern void ivec_scale(ivec_t *output, ivec_t const *input, int32_t scalar);
 extern int32_t ivec_min(ivec_t const *input);
 extern void ivec_display(ivec_t const *input);
+
 /* Vector initers and primitive function macro wrappers */
 #define ivec4_mm_init(vec_out, x, y, z, w)      \
     (vec_out).size = 4;                        \
@@ -49,6 +49,9 @@ extern void ivec_display(ivec_t const *input);
     assert((v0).size == (v1).size);             \
     (vec_out).size = (v0).size;                 \
     (vec_out).data.sse_register = v_mul_i32((v0).data.sse_register, (v1).data.sse_register)
+
+#define ivec_mm_dot(v0, v1)                     \
+    vectori128_dot((v0).data.sse_register, (v1).data.sse_register)
 
 #define ivec_mm_cross(vec_out, v0, v1)          \
     assert((v0).size == (v1).size && (v0).size == 3);             \

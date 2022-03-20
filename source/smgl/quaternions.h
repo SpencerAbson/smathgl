@@ -21,7 +21,6 @@ extern void quat_interpolate(quat_t *out, quat_t const*q0, quat_t const*q1, floa
 extern void quat_rotate_set_mat4(mat4_t *out, quat_t const *q0, fvec_t const *axis, float  angle);
 extern void quat_rotate_set_mat4_pure_simd(mat4_t *output, quat_t const *q0, fvec_t const* axis, const float angle); // for testing
 
-
 static inline void quat_integrate(quat_t *out, quat_t const *q0, fvec_t const *omega, float delta_t)
 {
     assert(omega->size == 3);

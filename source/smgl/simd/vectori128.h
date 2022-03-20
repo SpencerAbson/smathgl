@@ -9,7 +9,6 @@
     _mm_store_ss((float*)(mem_addr), _mm_castsi128_ps((vector)))     // NOTE: not all compilers have _mm_storeu_si32 as of 2022,
                                                                       // but this works in gcc and msvc.
 
-
 static inline __m128i v_mul_i32(__m128i input0, __m128i input1)
 {
     // multiply two lower i32s and store in dst

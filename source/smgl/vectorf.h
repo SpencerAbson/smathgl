@@ -1,6 +1,7 @@
 #ifndef SMATH_VECTORF_H_
 #define SMATH_VECTORF_H_
 #include <stdint.h>
+#include <stdio.h>
 #include <assert.h>
 #include "..\..\include/platform.h"
 
@@ -17,11 +18,35 @@ typedef struct fvec {
     union vec128f  data;
 }fvec_t;
 
+
 /* f32 composed vector functions */
-extern float fvec_dot(fvec_t const *input0, fvec_t const *input1);
-extern float fvec_min(fvec_t const *input);
-extern void  fvec_scale(fvec_t *out, fvec_t const *input, float scalar); // NOTE: macro version now exists
-extern void  fvec_display(fvec_t const *input);
+static inline void fvec_scale(fvec_t *output, fvec_t const *input, float scalar)
+{
+    __m128 scaling_vec = _mm_load_ss(&scalar);  // avoiding uing _mm_set_ps1
+    _mm_shuffle_ps(scaling_vec, scaling_vec, _MM_SHUFFLE(3, 3, 3, 3));
+    output->size = input->size;
+    output->data.sse_register = _mm_mul_ps(input->data.sse_register, scaling_vec);
+}
+
+static inline float fvec_min(fvec_t const *input)
+{
+    float min;
+    __m128 tmp = _mm_min_ps(input->data.sse_register, _mm_shuffle_ps(input->data.sse_register,
+                                                                     input->data.sse_register, _MM_SHUFFLE(2, 1, 0, 3)));
+    tmp = _mm_min_ps(tmp, _mm_shuffle_ps(tmp, tmp, _MM_SHUFFLE(1, 0, 3, 2)));;
+
+    _mm_store_ss(&min, tmp);
+    return min;
+}
+
+static inline void fvec_display(fvec_t const *input)
+{
+    printf("[ ");
+    for(uint32_t i = 0; i < input->size; i++)
+        printf("%4.3f ", input->data.values[i]);
+    printf(" ]");
+}
+
 
 /* vector initers and primitive functions  */
 #define fvec4_mm_init(vec_in, x, y, z, w)\
@@ -36,7 +61,7 @@ extern void  fvec_display(fvec_t const *input);
     (vec_in).size = 2;                          \
     (vec_in).data.sse_register = _mm_set_ps(0.0f, 0.0f, (y), (x));
 
-/* Primitve functions that aren't worth the overhead: (yes, macros with side-effects - how evil)*/
+/* Primitve functions that aren't worth the overhead: (yes, macros with side-effects - how evil) */
 #define fvec_mm_add(vec_out, v0, v1)            \
     assert((v0).size == (v1).size);             \
     (vec_out).size = (v0).size;                 \
@@ -62,7 +87,6 @@ extern void  fvec_display(fvec_t const *input);
     (vec_out).data.sse_register = vectorf128_cross((v0).data.sse_register, (v1).data.sse_register)
 
 #define fvec_mm_normalize(vec_out, v0)          \
-    assert((v0).size < 5 && (v0).size > 1);     \
     (vec_out).size = (v0).size;                 \
     (vec_out).data.sse_register = vectorf128_normalize((v0).data.sse_register)
 

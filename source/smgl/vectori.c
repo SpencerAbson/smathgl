@@ -6,18 +6,11 @@
 #include "simd/vectori128.h"
 
 
-int32_t ivec_dot(ivec_t const *input0, ivec_t const *input1)
-{
-    assert(input0->size == input1->size);
-    return vectori128_dot(input0->data.sse_register, input1->data.sse_register);
-}
-
-
 int32_t ivec_min(ivec_t const *input)
 {
     int32_t min;
     __m128i min_vec = vectori128_min(input->data.sse_register);
-    SMM_STOREU_SI32(&min, min_vec); // store lowest (positioned) value from min_vecm into min
+    SMM_STOREU_SI32(&min, min_vec);
 
     return min;
 }
