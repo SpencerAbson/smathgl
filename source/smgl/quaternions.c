@@ -21,20 +21,13 @@ void quat_rotate(quat_t *output, quat_t const *q0, fvec_t const *axis, float ang
 void quat_interpolate(quat_t *output, quat_t const *q0, quat_t const *q1, float interp_param, QuatInterps_t type)
 {
     assert(interp_param > 0.0f && interp_param < 1.0f);
-    switch(type)
-    {
-        case SM_QUAT_NLERP:
-            output->sse_register = quaternionf128_Nlerp(q0->sse_register, q1->sse_register, interp_param);
-            break;
-        case SM_QUAT_SLERP:
-            output->sse_register = quaternionf128_slerp(q0->sse_register, q1->sse_register, interp_param);
-            break;
-        case SM_QUAT_SQUAD:
-            // FIXME: squad not finished
-            break;
-        default:
-            return;
-    }
+    if(type == SM_QUAT_NLERP)
+        output->sse_register = quaternionf128_Nlerp(q0->sse_register, q1->sse_register, interp_param);
+    else if(type == SM_QUAT_SLERP)
+        output->sse_register = quaternionf128_slerp(q0->sse_register, q1->sse_register, interp_param);
+    // soon to have suitable squad implementation
+
+    return;
 }
 
 
@@ -58,8 +51,6 @@ void quat_rotate_set_mat4(mat4_t *output, quat_t const *q0, fvec_t const* axis, 
     output->sse_registers[2] = _mm_set_ps(0.0f, 1.0f - double_x_sqr - double_y_sqr, v2n, v1p);
     output->sse_registers[3] = _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f);
 }
-
-
 
 #if SMGL_INSTRSET > 4
 /* This turns out to be incredibly difficult to do in SIMD, and boasts little performance gain.
