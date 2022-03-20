@@ -78,12 +78,12 @@ static inline __m128 quaternionf128_known_rotate(__m128 const original, __m128 c
 }
 
 
-static inline __m128 quaternionf128_inverse(__m128 const input)
+static inline __m128 quaternionf128_inverse(__m128 const input)  // q^-1 = q^* / |q|
 {
-    __m128 conjugator = _mm_set_ps(-1.0f, -1.0f, -1.0f, 1.0f); // q^-1 = q^* / |q|
+    __m128 conjugator = _mm_set_ps(-1.0f, -1.0f, -1.0f, 1.0f); // this is surprisingly faster than clever sign masking
     __m128 conjugated = _mm_mul_ps(input, conjugator); // negated vector component of quaternion
 
-    __m128 square_norm = vectorf128_sum(_mm_mul_ps(input, input));
+    __m128 square_norm = vectorf128_vector_dot(input, input);
 
     return _mm_div_ps(conjugated, square_norm);
 }
@@ -116,8 +116,8 @@ static inline __m128 quaternionf128_Nlerp(__m128 const q0, __m128 const q1, floa
     const float dot     = vectorf128_dot(q0, q1);
     const float blend_n = 1.0f - blend;
 
-    __m128 v_blend   = _mm_load_ss(&blend); // [blend, blend, blend, blend]
-    __m128 v_blend_n = _mm_load_ss(&blend_n);
+    __m128 v_blend   = _mm_load_ps1(&blend); // [blend, blend, blend, blend]
+    __m128 v_blend_n = _mm_load_ps1(&blend_n);
     if(dot < 0.0f)
     {
         __m128 neg_1 = vectorf128_scale(q1, -1.0f); // negated q1
