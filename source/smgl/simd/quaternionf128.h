@@ -43,11 +43,27 @@ static inline __m128 quaternionf128_mul(__m128 a, __m128 b) // credit to Agner F
     return total;
 }*/
 
-
 static inline __m128 quaternionf128_pure_rotate(__m128 const original, __m128 const rotation)
 {
     float angle;
     _mm_store_ss(&angle, rotation);
+    float const half_ang = angle / 2.0f;
+    float const sin_hang = sinf(half_ang);
+
+    __m128 temp           = _mm_set_ss(angle - 1.0f);  // so that we get 1.0, x, y, z when we do next line
+    __m128 local_rotation = _mm_sub_ps(rotation, temp);
+    __m128 transform      = _mm_set_ps(sin_hang, sin_hang, sin_hang, cosf(half_ang));
+
+    local_rotation = _mm_mul_ps(local_rotation, transform); // q of rotation
+    temp           = quaternionf128_mul(local_rotation, original);
+
+    return temp;
+}
+
+/* In a few occasions, the user may have supplied the angle as an argument and it is us who have formatted it into the quaternion,
+ * in such cases, it is illogical to now call _mm_store_ss to retreive said angle after just storing it - this can increase perf by 5-10% */
+static inline __m128 quaternionf128_known_rotate(__m128 const original, __m128 const rotation, float angle)
+{
     float const half_ang = angle / 2.0f;
     float const sin_hang = sinf(half_ang);
 
