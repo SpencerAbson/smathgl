@@ -82,7 +82,7 @@ static inline void fvec_display(fvec_t const *input)
     vectorf128_dot((v0).data.sse_register, (v1).data.sse_register)
 
 #define fvec_mm_cross(vec_out, v0, v1)          \
-    assert((v0).size == (v1).size && (v0).size == 3);             \
+    assert((v0).size == (v1).size && (v0).size == 3);   \
     (vec_out).size = 3;                         \
     (vec_out).data.sse_register = vectorf128_cross((v0).data.sse_register, (v1).data.sse_register)
 

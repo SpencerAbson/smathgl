@@ -7,25 +7,14 @@
 
 static inline __m128 vectorf128_cross(__m128 const input0, __m128 const input1)
 {
-    __m128 a, b,  v1, v2; // cross product can be computed by (y1, z1, x1) * (z2, x2, y2) - (z1, x1, y1) * (y2, z2, x2 )
-    a = _mm_shuffle_ps(input0, input0, _MM_SHUFFLE(3, 0, 2, 1)); // a = (y1, z1, x1)
-    b = _mm_shuffle_ps(input1, input1, _MM_SHUFFLE(3, 1, 0, 2)); // b = (z2, x2, y2)
-    v1 = _mm_mul_ps(a, b);
+     // cross product can be computed by (y1, z1, x1) * (z2, x2, y2) - (z1, x1, y1) * (y2, z2, x2 )
+    __m128 tmp0 = _mm_shuffle_ps(input0, input0, _MM_SHUFFLE(3, 0, 2, 1));
+    __m128 tmp1 = _mm_shuffle_ps(input1, input1, _MM_SHUFFLE(3, 1, 0, 2));
+    __m128 tmp2 = _mm_mul_ps(tmp0, input1);
+    __m128 tmp3 = _mm_mul_ps(tmp0, tmp1);
+    __m128 tmp4 = _mm_shuffle_ps(tmp2, tmp2, _MM_SHUFFLE(3, 0, 2, 1));
 
-    a = _mm_shuffle_ps(input0, input0, _MM_SHUFFLE(3, 1, 0, 2)); // a = (z1, x1, y1)
-    b = _mm_shuffle_ps(input1, input1, _MM_SHUFFLE(3, 0, 2, 1)); // b = (y2, z2, x2)
-    v2 = _mm_mul_ps(a, b);
-
-    return _mm_sub_ps(v1, v2);
-}
-
-
-static inline __m128 vectorf128_sum(__m128 const input)
-{
-    __m128 tmp;
-    tmp = _mm_hadd_ps(input, input);
-    tmp = _mm_hadd_ps(tmp, tmp);
-    return tmp;
+    return _mm_sub_ps(tmp3, tmp4);
 }
 
 
@@ -106,7 +95,6 @@ static inline __m128 vectorf128_floor(__m128 const input)
 
 static inline float vectorf128_dot(__m128 const input0, __m128 const input1)
 {
-    float out;
     __m128 tmp;
 #if SMGL_INSTRSET > 4
     tmp = _mm_dp_ps(input0, input1, 0xff);
@@ -116,8 +104,7 @@ static inline float vectorf128_dot(__m128 const input0, __m128 const input1)
     tmp = _mm_add_ss(_mm_shuffle_ps(tmp, tmp, 1), tmp);
 #endif
 
-    _mm_store_ss(&out, tmp);
-    return out;
+    return _mm_cvtss_f32(tmp);
 }
 
 
@@ -146,6 +133,15 @@ static inline __m128 vectorf128_scale(__m128 const input, float scalar)
     __m128 scaling_vec = _mm_load_ss(&scalar);  // avoiding uing _mm_set_ps1
     _mm_shuffle_ps(scaling_vec, scaling_vec, _MM_SHUFFLE(3, 3, 3, 3));
     return _mm_mul_ps(input, scaling_vec);
+}
+
+
+static inline __m128 vectorf128_sum(__m128 const input)
+{
+    __m128 tmp;
+    tmp = _mm_hadd_ps(input, input);
+    tmp = _mm_hadd_ps(tmp, tmp);
+    return tmp;
 }
 
 
