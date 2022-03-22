@@ -6,7 +6,6 @@
 #include "..\..\include/platform.h"
 
 /* f32 composed vectors, aligned on 16 byte boundary for 128 bit SSE */
-typedef SMGL_ALIGN_16 float fvec4[4];
 typedef union vec128f
 {
     SMGL_ALIGN_16 float values[4];
@@ -18,20 +17,7 @@ typedef struct fvec {
     union vec128f  data;
 }fvec_t;
 
-
-/* vector initialisers */
-#define fvec4_mm_init(vec_in, x, y, z, w)\
-    (vec_in).size = 4;\
-    (vec_in).data.sse_register = _mm_set_ps((w), (z), (y), (x));
-
-#define fvec3_mm_init(vec_in, x, y, z)          \
-    (vec_in).size = 3;                          \
-    (vec_in).data.sse_register = _mm_set_ps(0.0f, (z), (y), (x));
-
-#define fvec2_mm_init(vec_in, x, y)             \
-    (vec_in).size = 2;                          \
-    (vec_in).data.sse_register = _mm_set_ps(0.0f, 0.0f, (y), (x));
-
+typedef fvec_t fvec2, fvec3, fvec4; // for better code clarity, but it should be known that these are identical in SSE.
 
 /* f32 composed vector functions */
 static inline void fvec_scale(fvec_t *output, fvec_t const *input, float scalar)
@@ -60,6 +46,19 @@ static inline void fvec_display(fvec_t const *input)
         printf("%4.3f ", input->data.values[i]);
     printf(" ]");
 }
+
+/* vector initialisers */
+#define fvec4_mm_init(vec_in, x, y, z, w)\
+    (vec_in).size = 4;\
+    (vec_in).data.sse_register = _mm_set_ps((w), (z), (y), (x));
+
+#define fvec3_mm_init(vec_in, x, y, z)          \
+    (vec_in).size = 3;                          \
+    (vec_in).data.sse_register = _mm_set_ps(0.0f, (z), (y), (x));
+
+#define fvec2_mm_init(vec_in, x, y)             \
+    (vec_in).size = 2;                          \
+    (vec_in).data.sse_register = _mm_set_ps(0.0f, 0.0f, (y), (x));
 
 /* Primitve functions that aren't worth the overhead: (yes, macros with side-effects - how evil) */
 #define fvec_mm_add(vec_out, v0, v1)            \

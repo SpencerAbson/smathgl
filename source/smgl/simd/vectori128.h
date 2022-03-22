@@ -41,6 +41,26 @@ static inline __m128i vectori128_cross(__m128i input0, __m128i input1)
     return _mm_sub_epi32(v1, v2);
 }
 
+static inline __m128i nvectori128_cross(__m128i input0, __m128i input1)
+{
+    __m128i tmp0 = _mm_shuffle_epi32(input0, _MM_SHUFFLE(3, 0, 2, 1));
+    __m128i tmp1 = _mm_shuffle_epi32(input0, _MM_SHUFFLE(3, 1, 0, 2));
+
+    __m128i tmp2 = v_mul_i32(tmp0, input1);
+    __m128i tmp3 = v_mul_i32(tmp0, tmp1);
+
+    __m128i tmp4 = _mm_shuffle_epi32(tmp2, _MM_SHUFFLE(3, 0, 2, 1));
+    return _mm_sub_epi32(tmp3, tmp4);
+}
+
+/*
+**    __m128 tmp0 = _mm_shuffle_ps(input0, input0, _MM_SHUFFLE(3, 0, 2, 1));
+    __m128 tmp1 = _mm_shuffle_ps(input1, input1, _MM_SHUFFLE(3, 1, 0, 2));
+    __m128 tmp2 = _mm_mul_ps(tmp0, input1);
+    __m128 tmp3 = _mm_mul_ps(tmp0, tmp1);
+    __m128 tmp4 = _mm_shuffle_ps(tmp2, tmp2, _MM_SHUFFLE(3, 0, 2, 1));
+*/
+
 
 static inline __m128i vectori128_sum(__m128i input)
 {
