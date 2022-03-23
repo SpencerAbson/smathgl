@@ -12,10 +12,11 @@ void mat4_perspective(mat4_t *out, float angle_rad, float aspect_ratio, float ne
     out->sse_registers[1] = _mm_set_ps(0.0f, 0.0f, 1.0f / tan_half_fov, 0.0f);
     out->sse_registers[2] = _mm_set_ps(-1.0f, -(far + near) / (far - near), 0.0f, 0.0f);
     out->sse_registers[3] = _mm_set_ps(0.0f, -(2 * far * near) / (far - near), 0.0f, 0.0f);
+
 }
 
 
-void mat4_lookat(mat4_t *out, fvec_t const *pos, fvec_t const *target, fvec_t const *up)
+void mat4_lookat(mat4_t *out, fvec3 const *pos, fvec3 const *target, fvec3 const *up)
 {
     assert(pos->size == 3 && target->size == 3 && up->size == 3);
     fvec_t cam_right, cam_up, cam_direction;
@@ -30,27 +31,23 @@ void mat4_lookat(mat4_t *out, fvec_t const *pos, fvec_t const *target, fvec_t co
     m1.sse_registers[0] = _mm_set_ps(0.0f, cam_direction.data.values[0], cam_up.data.values[0], cam_right.data.values[0]);
     m1.sse_registers[1] = _mm_set_ps(0.0f, cam_direction.data.values[1], cam_up.data.values[1], cam_right.data.values[1]);
     m1.sse_registers[2] = _mm_set_ps(0.0f, cam_direction.data.values[2], cam_up.data.values[2], cam_right.data.values[2]);
-    m1.sse_registers[3] = _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f);
+    m1.sse_registers[3] = _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f); // using _mm_set_ps when we know the sse registers are about to be used again
 
     mat4_init_diagonal(&m2, 1.0f);
     m2.sse_registers[3] = _mm_set_ps(1.0f, -pos->data.values[2], -pos->data.values[1], -pos->data.values[0]);
-    mat4_mm_mul(*out, m1, m2);
+    mat4_mul(*out, m1, m2);
 }
 
 
-void mat4_rotate(mat4_t *output, mat4_t const *input, fvec_t const* axis, float angle_rad)
+void mat4_rotate(mat4_t *output, mat4_t const *input, fvec3 const* axis, float angle_rad)
 {
-    // generate quaternion rep of rotation by rotaing {1, 0, 0, 0} by input
-    quat_t identity;
-    quat_mm_init(identity, 1.0f, 0.0f, 0.0f, 0.0f);
-
     mat4_t rotator;
-    quat_rotate_set_mat4(&rotator, &identity, axis, angle_rad); // set a rotation matrix described by quaternion of rotation by angle and axis
-    mat4_mm_mul(*output, rotator, *input);
+    quat_set_rotation_mat4(&rotator, axis, angle_rad); // set a rotation matrix described by quaternion of rotation by angle and axis
+    mat4_mul(*output, rotator, *input);
 }
 
 
-void mat4_set_euler_rotation(mat4_t *rotation_matrix, float angle, fvec_t *unit_vector) // note angle in radians
+void mat4_set_euler_rotation(mat4_t *rotation_matrix, float angle, fvec3 *unit_vector) // note angle in radians
 {
     assert(unit_vector->size == 3);
     const float cos_a = cosf(angle);

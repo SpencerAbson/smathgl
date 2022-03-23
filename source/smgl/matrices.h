@@ -16,21 +16,22 @@ extern void mat4_init_diagonal(mat4_t *out, const float translator);
 extern void mat4_init_translation(mat4_t *out, float x, float y, float z);
 extern void mat4_display(const mat4_t *mat);
 
-/* Primitve functions that aren't worth the overhead: */
-#define mat4_mm_mul(out, in0, in1)                 \
+/* Primitve function-like-macros that aren't worth any overhead: */
+void mat4_mul(mat4_t out, mat4_t const in0, mat4_t const in1);
+void mat4_add(mat4_t out, mat4_t const in0, mat4_t const in1);
+void mat4_sub(mat4_t out, mat4_t const in0, mat4_t const in1);
+void mat4_transpose(mat4_t out, mat4_t const in);
+
+#define mat4_mul(out, in0, in1)                 \
     mat4xm128_mul((in0).sse_registers, (in1).sse_registers, (out).sse_registers) \
 
-#define mat4_mm_add(out, in0, in1)                 \
+#define mat4_add(out, in0, in1)                 \
     mat4xm128_add((in0).sse_registers, (in1).sse_registers, (out).sse_registers) \
 
-#define mat4_mm_sub(out, in0, in1)                 \
+#define mat4_sub(out, in0, in1)                 \
     mat4xm128_sub((in0).sse_registers, (in1).sse_registers, (out).sse_registers) \
 
-#define mat4_mm_transpose(out, in0)                \
+#define mat4_transpose(out, in0)                \
     mat4xm128_transpose((in0).sse_registers, (out).sse_registers) \
-
-static inline void mat4_clear(mat4_t *input){
-    memset(input->values, 0, sizeof(float) * 16);
-}
 
 #endif // SMATH_MATRICES_H_

@@ -27,32 +27,31 @@ void quat_interpolate(quat_t *output, quat_t const *q0, quat_t const *q1, float 
         output->sse_register = quaternionf128_Nlerp(q0->sse_register, q1->sse_register, interp_param);
     else if(type == SM_QUAT_SLERP)
         output->sse_register = quaternionf128_slerp(q0->sse_register, q1->sse_register, interp_param);
-    // soon to have suitable squad implementation
+    // TODO: suitable squad implementation
 
     return;
 }
 
 
-void quat_rotate_set_mat4(mat4_t *output, quat_t const *q0, fvec_t const* axis, const float angle)
+void quat_to_mat4(mat4_t *output, quat_t const *input)
 {
-    quat_t q_of_rotation;
-    quat_rotate(&q_of_rotation, q0, axis, angle);
-    register const float double_x_sqr = 2.0f * q_of_rotation.values[1] * q_of_rotation.values[1];
-    register const float double_y_sqr = 2.0f * q_of_rotation.values[2] * q_of_rotation.values[2];
-    register const float double_z_sqr = 2.0f * q_of_rotation.values[3] * q_of_rotation.values[3];
+    register const float double_x_sqr = 2.0f * input->values[1] * input->values[1];
+    register const float double_y_sqr = 2.0f * input->values[2] * input->values[2];
+    register const float double_z_sqr = 2.0f * input->values[3] * input->values[3];
 
-    const float v0n = (2.0f * q_of_rotation.values[1] * q_of_rotation.values[2]) - (2.0f * q_of_rotation.values[0] * q_of_rotation.values[3]);
-    const float v0p = (2.0f * q_of_rotation.values[1] * q_of_rotation.values[2]) + (2.0f * q_of_rotation.values[0] * q_of_rotation.values[3]);
-    const float v1p = (2.0f * q_of_rotation.values[1] * q_of_rotation.values[3]) + (2.0f * q_of_rotation.values[0] * q_of_rotation.values[2]);
-    const float v1n = (2.0f * q_of_rotation.values[1] * q_of_rotation.values[3]) - (2.0f * q_of_rotation.values[0] * q_of_rotation.values[2]);
-    const float v2n = (2.0f * q_of_rotation.values[2] * q_of_rotation.values[3]) - (2.0f * q_of_rotation.values[0] * q_of_rotation.values[1]);
-    const float v2p = (2.0f * q_of_rotation.values[2] * q_of_rotation.values[3]) + (2.0f * q_of_rotation.values[0] * q_of_rotation.values[1]);
+    const float v0n = (2.0f * input->values[1] * input->values[2]) - (2.0f * input->values[0] * input->values[3]);
+    const float v0p = (2.0f * input->values[1] * input->values[2]) + (2.0f * input->values[0] * input->values[3]);
+    const float v1p = (2.0f * input->values[1] * input->values[3]) + (2.0f * input->values[0] * input->values[2]);
+    const float v1n = (2.0f * input->values[1] * input->values[3]) - (2.0f * input->values[0] * input->values[2]);
+    const float v2n = (2.0f * input->values[2] * input->values[3]) - (2.0f * input->values[0] * input->values[1]);
+    const float v2p = (2.0f * input->values[2] * input->values[3]) + (2.0f * input->values[0] * input->values[1]);
 
     output->sse_registers[0] = _mm_set_ps(0.0f, v1n, v0p, 1.0f - double_y_sqr - double_z_sqr);
     output->sse_registers[1] = _mm_set_ps(0.0f, v2p, 1.0f - double_x_sqr - double_z_sqr, v0n);
     output->sse_registers[2] = _mm_set_ps(0.0f, 1.0f - double_x_sqr - double_y_sqr, v2n, v1p);
     output->sse_registers[3] = _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f);
 }
+
 
 #if SMGL_INSTRSET > 4
 /* This turns out to be incredibly difficult to do in SSE, and boasts little performance gain.
