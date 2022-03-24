@@ -81,5 +81,12 @@
 #include <ammintrin.h>
 #endif
 
+// Debug assertions
+#include <assert.h>
+#if defined SMGL_DEBUG
+#define SMGL_ASSERT(x) assert((x))
+#else
+#define SMGL_ASSERT(x)
+#endif
 
 #endif // SMGL_PLATFORM_H_

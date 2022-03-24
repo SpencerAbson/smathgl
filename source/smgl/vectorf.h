@@ -2,7 +2,6 @@
 #define SMATH_VECTORF_H_
 #include <stdint.h>
 #include <stdio.h>
-#include <assert.h>
 #include "..\..\include/platform.h"
 
 /* f32 composed vectors, aligned on 16 byte boundary for 128 bit SSE */
@@ -75,17 +74,17 @@ static inline void fvec_display(fvec_t const *input)
 
 /* Primitve functions macro implementations: (yes, macros with side-effects - how evil) */
 #define fvec_add(vec_out, v0, v1)            \
-    assert((v0).size == (v1).size);          \
+    SMGL_ASSERT((v0).size == (v1).size);          \
     (vec_out).size = (v0).size;              \
     (vec_out).data.sse_register = _mm_add_ps((v0).data.sse_register, (v1).data.sse_register)
 
 #define fvec_sub(vec_out, v0, v1)            \
-    assert((v0).size == (v1).size);          \
+    SMGL_ASSERT((v0).size == (v1).size);          \
     (vec_out).size = (v0).size;              \
     (vec_out).data.sse_register = _mm_sub_ps((v0).data.sse_register, (v1).data.sse_register)
 
 #define fvec_mul(vec_out, v0, v1)            \
-    assert((v0).size == (v1).size);          \
+    SMGL_ASSERT((v0).size == (v1).size);          \
     (vec_out).size = (v0).size; \
     (vec_out).data.sse_register = _mm_mul_ps((v0).data.sse_register, (v1).data.sse_register); \
 
@@ -93,7 +92,7 @@ static inline void fvec_display(fvec_t const *input)
     vectorf128_dot((v0).data.sse_register, (v1).data.sse_register)
 
 #define fvec_cross(vec_out, v0, v1)          \
-    assert((v0).size == (v1).size && (v0).size == 3);   \
+    SMGL_ASSERT((v0).size == (v1).size && (v0).size == 3);   \
     (vec_out).size = 3;                      \
     (vec_out).data.sse_register = vectorf128_cross((v0).data.sse_register, (v1).data.sse_register)
 

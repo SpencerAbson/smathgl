@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <math.h>
-#include <assert.h>
 #include <string.h>
 #include "..\..\include/platform.h"
 #include "..\..\include/smathgl.h"
@@ -11,7 +10,7 @@
 
 static void sm_update_camera_vectors(sm_camera_t *self)
 {
-    fvec_t new_front;
+    fvec3 new_front;
     fvec3_init(new_front, cosf(SMGL_RADIANS(self->yaw)) * cosf(SMGL_RADIANS(self->pitch)),
                               sinf(SMGL_RADIANS(self->pitch)),
                               sinf(SMGL_RADIANS(self->yaw)) * cosf(SMGL_RADIANS(self->pitch)));
@@ -26,8 +25,10 @@ static void sm_update_camera_vectors(sm_camera_t *self)
 
 sm_camera_t *sm_cam_create(fvec_t position, fvec_t up, float yaw, float pitch)
 {
-    assert(position.size == 3 && up.size == 3); // FIXME: 0 magnitude up will lead to normalization error, consider catching this.
+    SMGL_ASSERT(position.size == 3 && up.size == 3); // FIXME: 0 magnitude up will lead to normalization error, consider catching this.
     sm_camera_t *self = malloc(sizeof(sm_camera_t));
+    if(!self) return 0;
+
     self->position = position;
     self->world_up = up;
     self->yaw      = yaw;

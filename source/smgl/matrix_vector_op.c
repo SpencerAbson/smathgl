@@ -1,4 +1,4 @@
-#include <assert.h>
+#include "..\..\include/platform.h"
 #include "matrix_vector_op.h"
 #include "simd/matrix4xm128f.h"
 #include "quaternions.h"
@@ -18,7 +18,8 @@ void mat4_perspective(mat4_t *out, float angle_rad, float aspect_ratio, float ne
 
 void mat4_lookat(mat4_t *out, fvec3 const *pos, fvec3 const *target, fvec3 const *up)
 {
-    assert(pos->size == 3 && target->size == 3 && up->size == 3);
+    SMGL_ASSERT(pos->size == 3 && target->size == 3 && up->size == 3);
+
     fvec_t cam_right, cam_up, cam_direction;
     fvec_sub(cam_direction, *pos, *target);
     fvec_normalize(cam_direction, cam_direction);
@@ -49,7 +50,8 @@ void mat4_rotate(mat4_t *output, mat4_t const *input, fvec3 const* axis, float a
 
 void mat4_set_euler_rotation(mat4_t *rotation_matrix, float angle, fvec3 *unit_vector) // note angle in radians
 {
-    assert(unit_vector->size == 3);
+    SMGL_ASSERT(unit_vector->size == 3);
+
     const float cos_a = cosf(angle);
     register const float sin_a = sinf(angle);
     register const float cos_a_n_1 = 1.0f - cos_a;

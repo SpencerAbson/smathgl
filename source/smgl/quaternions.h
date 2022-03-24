@@ -6,9 +6,9 @@
 
 typedef enum QuaternionInterpolation_t
 {
-SM_QUAT_NLERP,
-SM_QUAT_SLERP,
-SM_QUAT_SQUAD
+SMGL_QUAT_NLERP,
+SMGL_QUAT_SLERP,
+SMGL_QUAT_SQUAD
 }QuatInterps_t;
 
 /* Quaternions are stored {w, i, j, k} as __m128 vectors (4 packed floats) */

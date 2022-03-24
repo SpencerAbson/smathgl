@@ -48,12 +48,12 @@ int32_t ivec_dot(ivec_t v0, ivec_t v1);
     (vec_out).data.sse_register = _mm_set_epi32(0, 0, (y), (x))
 
 #define ivec_add(vec_out, v0, v1)            \
-    assert((v0).size == (v1).size);          \
+    SMGL_ASSERT((v0).size == (v1).size);          \
     (vec_out).size = (v0).size;              \
     (vec_out).data.sse_register = _mm_add_epi((v0).data.sse_register, (v1).data.sse_register)
 
 #define ivec_sub(vec_out, v0, v1)            \
-    assert((v0).size == (v1).size);          \
+    SMGL_ASSERT((v0).size == (v1).size);          \
     (vec_out).size = (v0).size;              \
     (vec_out).data.sse_register = _mm_sub_epi((v0).data.sse_register, (v1).data.sse_register)
 
@@ -66,7 +66,7 @@ int32_t ivec_dot(ivec_t v0, ivec_t v1);
     vectori128_dot((v0).data.sse_register, (v1).data.sse_register)
 
 #define ivec_cross(vec_out, v0, v1)          \
-    assert((v0).size == (v1).size && (v0).size == 3);          \
+    SMGL_ASSERT((v0).size == (v1).size && (v0).size == 3);          \
     (vec_out).size = (v0).size;              \
     (vec_out).data.sse_register = vectori128_cross((v0).data.sse_register, (v1).data.sse_register)
 
