@@ -58,7 +58,7 @@ int32_t ivec_dot(ivec_t v0, ivec_t v1);
     (vec_out).data.sse_register = _mm_sub_epi((v0).data.sse_register, (v1).data.sse_register)
 
 #define ivec_mul(vec_out, v0, v1)            \
-    assert((v0).size == (v1).size);          \
+    SMGL_ASSERT((v0).size == (v1).size);          \
     (vec_out).size = (v0).size;              \
     (vec_out).data.sse_register = v_mul_i32((v0).data.sse_register, (v1).data.sse_register)
 

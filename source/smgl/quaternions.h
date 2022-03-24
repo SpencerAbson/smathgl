@@ -22,7 +22,7 @@ extern void quat_to_mat4(mat4_t *output, quat_t const *input);
 
 static inline void quat_integrate(quat_t *out, quat_t const *q0, fvec3 const *omega, float delta_t)
 {
-    assert(omega->size == 3);
+    SMGL_ASSERT(omega->size == 3);
     out->sse_register = quaternionf128_integrate(q0->sse_register, omega->data.sse_register, delta_t);
 }
 
