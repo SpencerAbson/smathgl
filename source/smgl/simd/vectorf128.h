@@ -132,6 +132,7 @@ static inline __m128 vectorf128_scale(__m128 const input, float scalar)
 {
     __m128 scaling_vec = _mm_load_ss(&scalar);  // avoiding uing _mm_set_ps1
     _mm_shuffle_ps(scaling_vec, scaling_vec, _MM_SHUFFLE(3, 3, 3, 3));
+
     return _mm_mul_ps(input, scaling_vec);
 }
 

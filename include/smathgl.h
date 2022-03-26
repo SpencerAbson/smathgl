@@ -2,6 +2,7 @@
 #define SMATHGL_H_
 
 #include <math.h>
+#include "platform.h"
 
 #define SMGL_PI        3.14159265358979323846264338327950288   // pi
 #define SMGL_1_PI      0.318309886183790671537767526745028724  // 1/pi
@@ -29,4 +30,14 @@
 #define SMGL_SQRT1_2f ((float)SMGL_SQRT1_2)
 
 #define SMGL_RADIANS(x) (x/180.0f * (float)SMGL_PI)
+
+#if SMGL_INSTRSET > 6
+#define M128_FAST_ACOS_APPROX(theta)            \
+    _mm_fmadd_ps(_mm_fmsub_ps(_mm_mul_ps(_mm_set1_ps(-0.69813170079773212f), (theta)), (theta)), \
+_mm_set1_ps(0.87266462599716477f), (theta), _mm_set1_ps(1.5707963267948966f))
+
+#else
+#define M128_FAST_ACOS_APPROX(theta)
+#endif
+
 #endif // SMATHGL_H_

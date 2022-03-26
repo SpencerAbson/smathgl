@@ -29,24 +29,9 @@ static inline __m128 quaternionf128_mul(__m128 a, __m128 b) // credit to Agner F
 }
 
 
-/* static inline __m128 quaternionf128_rotate(quat* q0, fvec *axis, const float angle)
-{
-    assert(axis->size == 3);
-    float half_ang = angle / 2.0f;
-    __m128 total          = _mm_load_ps(q0->values);
-    __m128 local_rotation = _mm_set_ps(axis->data.values[2], axis->data.values[1], axis->data.values[0], 1.0f);
-    __m128 transform      = _mm_set_ps(sinf(half_ang), sinf(half_ang), sinf(half_ang), cosf(half_ang));
-
-    local_rotation   = _mm_mul_ps(local_rotation, transform);
-    total = quaternionf128_mul(local_rotation, total);
-
-    return total;
-}*/
-
 static inline __m128 quaternionf128_pure_rotate(__m128 const original, __m128 const rotation)
 {
-    float angle;
-    _mm_store_ss(&angle, rotation);
+    float const angle = _mm_cvtss_f32(rotation);
     float const half_ang = angle / 2.0f;
     float const sin_hang = sinf(half_ang);
 
@@ -84,8 +69,8 @@ static inline __m128 quaternionf128_known_rotate(__m128 const original, __m128 c
 
 static inline __m128 quaternionf128_inverse(__m128 const input)  // q^-1 = q^* / |q|
 {
-    __m128 conjugator = _mm_set_ps(-1.0f, -1.0f, -1.0f, 1.0f); // this is surprisingly faster than clever sign masking
-    __m128 conjugated = _mm_mul_ps(input, conjugator); // negated vector component of quaternion
+    __m128 conjugator = _mm_set_ps(-0.0f, -0.0f, -0.0f, 0.0f);
+    __m128 conjugated = _mm_xor_ps(input, conjugator); // negated vector component of quaternion
 
     __m128 square_norm = vectorf128_vector_dot(input, input);
 
