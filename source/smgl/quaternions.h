@@ -46,6 +46,7 @@ void quat_normalize(quat_t q_out, quat_t const q_in);
 void quat_inverse(quat_t q_out, quat_t const q_in);
 void quat_mul(quat_t q_out, quat_t const q0, quat_t const q1);
 void quat_init(quat_t q_out, float w, float x, float y, float z);
+void quat_rotateq(quat_t q_out, quat_t q0, quat_t q1);
 
 #define quat_normalize(qout, qin)                                   \
     (qout).sse_register = vectorf128_normalize((qin).sse_register)
@@ -59,5 +60,6 @@ void quat_init(quat_t q_out, float w, float x, float y, float z);
 #define quat_init(qout, w, x, y, z)              \
     (qout).sse_register = _mm_set_ps((z), (y), (x), (w))
 
-
+#define quat_rotateq(qout, q0, q1)              \
+    (qout).sse_register = quaternionf128_pure_rotate((q0).sse_register, (q1).sse_register)
 #endif // QUATERNIONS_H_

@@ -9,11 +9,9 @@
 void quat_rotate(quat_t *output, quat_t const *q0, fvec_t const *axis, float angle)
 {
     SMGL_ASSERT(axis->size == 3);
-    __m128 q_of_rotation;
 
-    q_of_rotation =  _mm_set_ps(axis->data.values[2], axis->data.values[1],  // replace with shuffle
+    __m128 q_of_rotation =  _mm_set_ps(axis->data.values[2], axis->data.values[1],  // replace with shuffle
                                      axis->data.values[0], angle); // w, x, y, z
-
     output->sse_register = quaternionf128_known_rotate(q0->sse_register, q_of_rotation, angle);
     return;
 }
@@ -22,6 +20,7 @@ void quat_rotate(quat_t *output, quat_t const *q0, fvec_t const *axis, float ang
 void quat_interpolate(quat_t *output, quat_t const *q0, quat_t const *q1, float interp_param, QuatInterps_t type)
 {
     SMGL_ASSERT(interp_param > 0.0f && interp_param < 1.0f);
+
     if(type == SMGL_QUAT_NLERP)
         output->sse_register = quaternionf128_Nlerp(q0->sse_register, q1->sse_register, interp_param);
     else if(type == SMGL_QUAT_SLERP)

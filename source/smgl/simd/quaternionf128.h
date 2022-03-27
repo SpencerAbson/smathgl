@@ -46,6 +46,26 @@ static inline __m128 quaternionf128_pure_rotate(__m128 const original, __m128 co
 }
 
 
+static inline __m128 quaternionf128_new_pure_rotate(__m128 const original, __m128 const rotation)
+{
+    __m128 half_theta = _mm_mul_ps(_mm_shuffle_ps(rotation, rotation, _MM_SHUFFLE(3, 3, 3, 3)), _mm_set1_ps(0.5f));
+
+    __m128 half_theta_sqr = _mm_mul_ps(half_theta, half_theta);
+    __m128 sin_half_theta = M128_FAST_SIN_APPROX(half_theta, half_theta_sqr);
+
+
+    __m128 tmp0 = _mm_mul_ps(rotation, sin_half_theta);
+    __m128 tmp1 = _mm_set1_ps(1.0f);
+    //__m128 tmp2 = _mm_insert_ps(tmp0, _mm_set1_ps(_mm_sqrt_ps(_mm_sub_ps(tmp1, _mm_mul_ps(sin_half_theta, sin_half_theta)))), 0x0);
+    __m128 tmp2 = _mm_insert_ps(tmp0, _mm_sqrt_ps(_mm_sub_ps(tmp1, _mm_mul_ps(sin_half_theta, sin_half_theta))), 0x0);
+
+    __m128 fuck = _mm_set_ps(-0.0f, 0.0f, 0.0f, 0.0f);
+    tmp2 = _mm_xor_ps(tmp2, fuck);
+
+
+     return quaternionf128_mul(tmp2, original);
+}
+
 static inline __m128 quaternionf128_set_known_rotation(__m128 const rotation, float angle)
 {
     float const half_ang = angle / 2.0f;
@@ -78,18 +98,59 @@ static inline __m128 quaternionf128_inverse(__m128 const input)  // q^-1 = q^* /
 }
 
 
+#if SMGL_INSTRSET > 6
 static inline __m128 quaternionf128_slerp(__m128 const input0, __m128 const input1, float interp_param)
 {
-    float theta, sin_theta;
-    const float cos_theta = vectorf128_dot(input0, input1);
+    __m128 cos_theta = vectorf128_vector_dot(input0, input1);
+    __m128 negation  = _mm_and_ps(_mm_cmplt_ps(cos_theta, _mm_setzero_ps()), SET_PS1_FROM_HEX(0x80000000));
+    __m128 one_v     = _mm_set1_ps(1.0f);
 
-    theta = acosf(cos_theta);
-    sin_theta = sqrtf(1.0f - cos_theta * cos_theta);
-    float q0_scalar = sinf((1.0f - interp_param) * theta) / sin_theta;
-    float q1_scalar = sinf(interp_param * theta) / sin_theta;
+    cos_theta = _mm_xor_ps(cos_theta, negation);  // ensure angle is +ve
+    __m128 theta = M128_FAST_ACOS_APPROX(cos_theta);
 
-    return _mm_add_ps(vectorf128_scale(input0, q0_scalar), vectorf128_scale(input1, q1_scalar));
+    __m128 t_v       = _mm_set_ss(interp_param);
+    __m128 one_sub_t = _mm_sub_ps(one_v, t_v); // 1-t, 1, 1, 1
+
+    __m128 t_combined = _mm_shuffle_ps(t_v, one_sub_t, _MM_SHUFFLE(3, 3, 3, 3)); // (1-t), (1-t) t, t
+    t_combined = _mm_mul_ps(theta, t_combined); // (1-t)*angle, <-, t*angle, <-
+
+    __m128 theta_sqr = _mm_mul_ps(t_combined, t_combined); // sin(theta) approximation via known polynomial expansion
+    __m128 sin_theta = M128_FAST_SIN_APPROX(t_combined, theta_sqr);
+
+    __m128 q0_factor = _mm_shuffle_ps(sin_theta, sin_theta, _MM_SHUFFLE(3, 3, 3, 3));
+    __m128 q1_factor = _mm_shuffle_ps(sin_theta, sin_theta, _MM_SHUFFLE(0, 0, 0, 0));
+
+    q0_factor = _mm_xor_ps(q0_factor, negation);
+    q0_factor = _mm_mul_ps(q0_factor, input0);
+
+    __m128 res = _mm_fmadd_ps(input1, q1_factor, q0_factor);
+    return _mm_mul_ps(_mm_rsqrt_ps(vectorf128_vector_dot(res, res)), res); // normalizing
+
 }
+
+#else  // wayyyy slower, but due to be improved
+static inline __m128 quaternionf128_slerp(__m128 const input0, __m128 const input1, float interp_param)
+{
+    float theta;
+    __m128 cos_theta = vectorf128_vector_dot(input0, input1);
+    __m128 negation  = _mm_and_ps(_mm_cmplt_ps(cos_theta, _mm_setzero_ps()), SET_PS1_FROM_HEX(0x80000000));
+    cos_theta = _mm_xor_ps(cos_theta, negation);  // ensure angle is +ve
+
+    float f_cos_theta = _mm_cvtss_f32(cos_theta);
+    theta = acosf(f_cos_theta);
+    __m128 sin_theta = _mm_set1_ps(sqrtf(1.0f - f_cos_theta * f_cos_theta));
+
+    __m128 q0_scalar = _mm_set1_ps(sinf((1.0f - interp_param) * theta));
+    __m128 q1_scalar = _mm_set1_ps(sinf(interp_param * theta));
+
+    q0_scalar = _mm_xor_ps(q0_scalar, negation);
+
+    __m128 res = _mm_add_ps(_mm_mul_ps(input0, q0_scalar), _mm_mul_ps(input1, q1_scalar));
+    res = _mm_div_ps(res, sin_theta);
+    return _mm_mul_ps(_mm_rsqrt_ps(vectorf128_vector_dot(res, res)), res); // normalizing
+}
+
+#endif
 
 
 static inline __m128 quaternionf128_squad_interpolate(__m128 q0, __m128 q1, __m128 s0, __m128 s1, float t)
@@ -105,11 +166,12 @@ static inline __m128 quaternionf128_Nlerp(__m128 const q0, __m128 const q1, floa
     const float dot     = vectorf128_dot(q0, q1);
     const float blend_n = 1.0f - blend;
 
-    __m128 v_blend   = _mm_load_ps1(&blend); // [blend, blend, blend, blend]
-    __m128 v_blend_n = _mm_load_ps1(&blend_n);
+    __m128 v_blend   = _mm_set1_ps(blend); // [blend, blend, blend, blend]
+    __m128 v_blend_n = _mm_set1_ps(blend_n);
     if(dot < 0.0f)
     {
-        __m128 neg_1 = vectorf128_scale(q1, -1.0f); // negated q1
+        __m128 negat = _mm_set_ps(-0.0f, -0.0f, -0.0f, -0.0f);
+        __m128 neg_1 = _mm_xor_ps(q1, negat);  // negating q1
         __m128 tmp0  = _mm_mul_ps(v_blend_n, q0);
         __m128 tmp1  = _mm_mul_ps(v_blend, neg_1);
 
@@ -132,7 +194,7 @@ static inline __m128 quaternionf128_integrate(__m128 const q0, __m128 const omeg
 {
     // q' = /\q q
     __m128 delta_q, s;
-    __m128 tmp0  = _mm_set_ps1(1.0f);
+    __m128 tmp0  = _mm_set1_ps(1.0f);
     __m128 theta = vectorf128_scale(omega, 0.5f * delta_t);
     const float theta_mag_sqr = vectorf128_dot(theta, theta);
 
