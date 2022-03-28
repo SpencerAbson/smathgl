@@ -28,7 +28,7 @@ static inline __m128 quaternionf128_mul(__m128 a, __m128 b) // credit to Agner F
     return _mm_add_ps(t03, t12m);
 }
 
-
+// I know rotations are slow for now
 static inline __m128 quaternionf128_pure_rotate(__m128 const original, __m128 const rotation)
 {
     float const angle = _mm_cvtss_f32(rotation);
@@ -45,26 +45,6 @@ static inline __m128 quaternionf128_pure_rotate(__m128 const original, __m128 co
     return temp;
 }
 
-
-static inline __m128 quaternionf128_new_pure_rotate(__m128 const original, __m128 const rotation)
-{
-    __m128 half_theta = _mm_mul_ps(_mm_shuffle_ps(rotation, rotation, _MM_SHUFFLE(3, 3, 3, 3)), _mm_set1_ps(0.5f));
-
-    __m128 half_theta_sqr = _mm_mul_ps(half_theta, half_theta);
-    __m128 sin_half_theta = M128_FAST_SIN_APPROX(half_theta, half_theta_sqr);
-
-
-    __m128 tmp0 = _mm_mul_ps(rotation, sin_half_theta);
-    __m128 tmp1 = _mm_set1_ps(1.0f);
-    //__m128 tmp2 = _mm_insert_ps(tmp0, _mm_set1_ps(_mm_sqrt_ps(_mm_sub_ps(tmp1, _mm_mul_ps(sin_half_theta, sin_half_theta)))), 0x0);
-    __m128 tmp2 = _mm_insert_ps(tmp0, _mm_sqrt_ps(_mm_sub_ps(tmp1, _mm_mul_ps(sin_half_theta, sin_half_theta))), 0x0);
-
-    __m128 fuck = _mm_set_ps(-0.0f, 0.0f, 0.0f, 0.0f);
-    tmp2 = _mm_xor_ps(tmp2, fuck);
-
-
-     return quaternionf128_mul(tmp2, original);
-}
 
 static inline __m128 quaternionf128_set_known_rotation(__m128 const rotation, float angle)
 {
@@ -98,6 +78,7 @@ static inline __m128 quaternionf128_inverse(__m128 const input)  // q^-1 = q^* /
 }
 
 
+
 #if SMGL_INSTRSET > 6
 static inline __m128 quaternionf128_slerp(__m128 const input0, __m128 const input1, float interp_param)
 {
@@ -124,7 +105,7 @@ static inline __m128 quaternionf128_slerp(__m128 const input0, __m128 const inpu
     q0_factor = _mm_mul_ps(q0_factor, input0);
 
     __m128 res = _mm_fmadd_ps(input1, q1_factor, q0_factor);
-    return _mm_mul_ps(_mm_rsqrt_ps(vectorf128_vector_dot(res, res)), res); // normalizing
+    return res;//_mm_mul_ps(_mm_rsqrt_ps(vectorf128_vector_dot(res, res)), res); // normalizing
 
 }
 
@@ -159,7 +140,7 @@ static inline __m128 quaternionf128_squad_interpolate(__m128 q0, __m128 q1, __m1
     return quaternionf128_slerp(quaternionf128_slerp(q0, q1, t), quaternionf128_slerp(s0, s1, t), 2 * t * (1.0f - t));
 }
 
-
+// use this for fast reliable interpolation
 static inline __m128 quaternionf128_Nlerp(__m128 const q0, __m128 const q1, float blend) // linear quaternion interpolation
 {
     __m128 output;
@@ -200,6 +181,7 @@ static inline __m128 quaternionf128_integrate(__m128 const q0, __m128 const omeg
 
     // set the lowest value in theta to 1.0f
 #if SMGL_INSTRSET > 4
+    theta = _mm_shuffle_ps(theta, theta, _MM_SHUFFLE(3, 2, 1, 0));
     theta = _mm_insert_ps(theta, tmp0, 0x0);
 #else
     __m128 tmp1 = _mm_unpackhi_ps(tmp0, theta);
