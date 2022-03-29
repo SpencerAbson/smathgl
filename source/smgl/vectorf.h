@@ -57,7 +57,7 @@ static inline void fvec_display(fvec_t const *input)
     printf("[ ");
     for(uint32_t i = 0; i < input->size; i++)
         printf("%4.3f ", input->data.values[i]);
-    printf(" ]");
+    printf(" ]\n");
 }
 
 /* vector initialisers */

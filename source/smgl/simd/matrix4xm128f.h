@@ -174,27 +174,27 @@ static inline void mat4xm128_rotate(__m128 const input[4], __m128 const axis, fl
     /* negation allows us to conform with the operation of order in _mm_addsub_ps within a single instruction */
     asic = _mm_xor_ps(asic, _mm_set_ps(-0.0f, 0.0f, 0.0f, 0.0f));
     {
-        __m128 tmp = _mm_shuffle_ps(temp, temp, _MM_SHUFFLE(0, 0, 0, 0));
-        __m128 at  = _mm_mul_ps(tmp, axis);
-        __m128 r0  = _mm_addsub_ps(at, _mm_shuffle_ps(asic, asic, _MM_SHUFFLE(0, 1, 2, 3)));
+        __m128 tmp0 = _mm_shuffle_ps(temp, temp, _MM_SHUFFLE(0, 0, 0, 0));
+        __m128 at0  = _mm_mul_ps(tmp0, axis);
+        __m128 r0  = _mm_addsub_ps(at0, _mm_shuffle_ps(asic, asic, _MM_SHUFFLE(0, 1, 2, 3)));
         rotation[0]  = _mm_insert_ps(r0, zero, 0x30); // zeroing the garbage values TODO: cleaner approach to this
     }
 
     /* note that the lowest value is negated again for the purpose of reversing previous change */
     asic = _mm_xor_ps(asic, _mm_set_ps(-0.0f, 0.0f, -0.0f, -0.0f));
     {
-        __m128 tmp = _mm_shuffle_ps(temp, temp, _MM_SHUFFLE(1, 1, 1, 1));
-        __m128 at  = _mm_mul_ps(tmp, axis);
-        __m128 r0  = _mm_addsub_ps(at, _mm_shuffle_ps(asic, asic, _MM_SHUFFLE(0, 0, 3, 2)));
-        rotation[1] = _mm_insert_ps(r0, zero, 0x30);
+        __m128 tmp1 = _mm_shuffle_ps(temp, temp, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 at1  = _mm_mul_ps(tmp1, axis);
+        __m128 r1  = _mm_addsub_ps(at1, _mm_shuffle_ps(asic, asic, _MM_SHUFFLE(0, 0, 3, 2)));
+        rotation[1] = _mm_insert_ps(r1, zero, 0x30);
     }
 
     asic = _mm_xor_ps(asic, _mm_set_ps(-0.0f, -0.0f, 0.0f, 0.0f));
     {
-        __m128 tmp = _mm_shuffle_ps(temp, temp, _MM_SHUFFLE(2, 2, 2, 2));
-        __m128 at  = _mm_mul_ps(tmp, axis);
-        __m128 r0  = _mm_addsub_ps(at, _mm_shuffle_ps(asic, asic, _MM_SHUFFLE(0, 3, 0, 1)));
-        rotation[2] = _mm_insert_ps(r0, zero, 0x30);
+        __m128 tmp2 = _mm_shuffle_ps(temp, temp, _MM_SHUFFLE(2, 2, 2, 2));
+        __m128 at2  = _mm_mul_ps(tmp2, axis);
+        __m128 r2  = _mm_addsub_ps(at2, _mm_shuffle_ps(asic, asic, _MM_SHUFFLE(0, 3, 0, 1)));
+        rotation[2] = _mm_insert_ps(r2, zero, 0x30);
     }
 
     /* set final row and rotate input by rotation */
