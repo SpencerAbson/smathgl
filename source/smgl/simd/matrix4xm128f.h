@@ -158,10 +158,10 @@ static inline __m128 matrixf128_vec4_mul(__m128 vec, __m128 mat[4])
 
 
 
-static inline void mat4xm128_rotate(__m128 const input[4], __m128 const axis, float a, __m128 out[4])
+static inline void mat4xm128_rotate(__m128 const input[4], __m128 const axis, float angle, __m128 out[4])
 {
-    float c = cosf(a);
-    float s = sinf(a);
+    float c = cosf(angle);
+    float s = sinf(angle);
 
     __m128 rotation[4];
     __m128 one  = _mm_set1_ps(1.0f);
