@@ -53,6 +53,7 @@ static inline float fvec_min(fvec_t const *input)
 
 static inline void fvec_display(fvec_t const *input)
 {
+    SMGL_ASSERT(input->size > 0 && input->size < 5);
     printf("[ ");
     for(uint32_t i = 0; i < input->size; i++)
         printf("%4.3f ", input->data.values[i]);

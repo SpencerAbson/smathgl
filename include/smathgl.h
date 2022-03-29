@@ -38,9 +38,6 @@
 #if SMGL_INSTRSET > 6
 #define M128_FAST_ACOS_APPROX(theta) _mm_fmadd_ps(_mm_fmsub_ps(_mm_mul_ps(_mm_set1_ps(-0.69813170079773212f), (theta)), (theta), _mm_set1_ps(0.87266462599716477f)), (theta), _mm_set1_ps(1.5707963267948966f));
 #define M128_FAST_SIN_APPROX(theta, theta_sqr) _mm_mul_ps((theta), _mm_fmadd_ps(_mm_fmadd_ps((theta_sqr), _mm_set1_ps(5.64311797634681035370e-03f), _mm_set1_ps(-1.55271410633428644799e-01f)), (theta_sqr), _mm_set1_ps(9.87862135574673806965e-01f)));
-
-#else
-#define M128_FAST_ACOS_APPROX(theta) (theta)
 #endif
 
 #endif // SMATHGL_H_

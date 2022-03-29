@@ -3,10 +3,15 @@
 #include "matrices.h"
 #include "vectorf.h"
 
-extern void mat4_rotate(mat4_t *out, mat4_t const *input, fvec3 const* axis, float angle_rad);
+//extern void mat4_rotate(mat4_t *out, mat4_t const *input, fvec3 const* axis, float angle_rad);
 extern void mat4_perspective(mat4_t *out, float angle_rad, float aspect_ratio, float near, float far);
 extern void mat4_lookat(mat4_t *out, fvec3 const *position, fvec3 const *target, fvec3 const *up);
 extern void mat4_set_euler_rotation(mat4_t *rotation_matrix, float angle, fvec3 *unit_vector);
+
+static inline void mat4_rotate(mat4_t *out, mat4_t const *input, fvec3 const* axis, float angle_rad)
+{
+    mat4xm128_rotate(input->sse_registers, axis->data.sse_register, angle_rad, out->sse_registers);
+}
 
 static inline void vec4_outer_product(mat4_t *output, fvec3 const *input0,  fvec3 const *input1)
 {

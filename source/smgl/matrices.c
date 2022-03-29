@@ -10,7 +10,6 @@ void mat4_init_diagonal(mat4_t *output, const float translator)
     output->sse_registers[1] = _mm_set_ps(0.0f, 0.0f, translator, 0.0f);
     output->sse_registers[2] = _mm_set_ps(0.0f, translator, 0.0f, 0.0f);
     output->sse_registers[3] = _mm_set_ps(translator, 0.0f, 0.0f, 0.0f);
-    return;
 }
 
 

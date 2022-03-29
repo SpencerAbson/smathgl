@@ -2,6 +2,7 @@
 #define MATRIX4XM128F_H_
 
 #include "..\..\..\include/platform.h"
+#include "..\..\..\include/smathgl.h"
 #include "vectorf128.h"
 
 
@@ -132,5 +133,73 @@ static inline void mat4xm128_mul(const __m128 input0[4], const __m128 input1[4],
     }
 }
 
+
+static inline __m128 matrixf128_vec4_mul(__m128 vec, __m128 mat[4])
+{
+    __m128 m0 = _mm_mul_ps(vec, mat[0]);
+    __m128 m1 = _mm_mul_ps(vec, mat[1]);
+    __m128 m2 = _mm_mul_ps(vec, mat[2]);
+    __m128 m3 = _mm_mul_ps(vec, mat[3]);
+
+    __m128 u0 = _mm_unpacklo_ps(m0, m1);
+    __m128 u1 = _mm_unpackhi_ps(m0, m1);
+    __m128 a0 = _mm_add_ps(u0, u1);
+
+    __m128 u2 = _mm_unpacklo_ps(m2, m3);
+    __m128 u3 = _mm_unpackhi_ps(m2, m3);
+    __m128 a1 = _mm_add_ps(u2, u3);
+
+    __m128 f0 = _mm_movelh_ps(a0, a1);
+    __m128 f1 = _mm_movehl_ps(a1, a0);
+    __m128 f2 = _mm_add_ps(f0, f1);
+
+    return f2;
+}
+
+
+
+static inline void mat4xm128_rotate(__m128 const input[4], __m128 const axis, float a, __m128 out[4])
+{
+    float c = cosf(a);
+    float s = sinf(a);
+
+    __m128 rotation[4];
+    __m128 one  = _mm_set1_ps(1.0f);
+    __m128 zero = _mm_setzero_ps();
+
+    __m128 neg_c = _mm_set1_ps(1.0f - c);
+    __m128 temp  = _mm_mul_ps(axis, neg_c);
+    __m128 asic  = _mm_insert_ps(_mm_mul_ps(axis, _mm_set1_ps(s)), _mm_sub_ps(one, neg_c), 0x30); // 1 - (1 - c) = c
+
+    /* negation allows us to conform with the operation of order in _mm_addsub_ps within a single instruction */
+    asic = _mm_xor_ps(asic, _mm_set_ps(-0.0f, 0.0f, 0.0f, 0.0f));
+    {
+        __m128 tmp = _mm_shuffle_ps(temp, temp, _MM_SHUFFLE(0, 0, 0, 0));
+        __m128 at  = _mm_mul_ps(tmp, axis);
+        __m128 r0  = _mm_addsub_ps(at, _mm_shuffle_ps(asic, asic, _MM_SHUFFLE(0, 1, 2, 3)));
+        rotation[0]  = _mm_insert_ps(r0, zero, 0x30); // zeroing the garbage values TODO: cleaner approach to this
+    }
+
+    /* note that the lowest value is negated again for the purpose of reversing previous change */
+    asic = _mm_xor_ps(asic, _mm_set_ps(-0.0f, 0.0f, -0.0f, -0.0f));
+    {
+        __m128 tmp = _mm_shuffle_ps(temp, temp, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 at  = _mm_mul_ps(tmp, axis);
+        __m128 r0  = _mm_addsub_ps(at, _mm_shuffle_ps(asic, asic, _MM_SHUFFLE(0, 0, 3, 2)));
+        rotation[1] = _mm_insert_ps(r0, zero, 0x30);
+    }
+
+    asic = _mm_xor_ps(asic, _mm_set_ps(-0.0f, -0.0f, 0.0f, 0.0f));
+    {
+        __m128 tmp = _mm_shuffle_ps(temp, temp, _MM_SHUFFLE(2, 2, 2, 2));
+        __m128 at  = _mm_mul_ps(tmp, axis);
+        __m128 r0  = _mm_addsub_ps(at, _mm_shuffle_ps(asic, asic, _MM_SHUFFLE(0, 3, 0, 1)));
+        rotation[2] = _mm_insert_ps(r0, zero, 0x30);
+    }
+
+    /* set final row and rotate input by rotation */
+    rotation[3] = _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f);
+    mat4xm128_mul(input, rotation, out);
+}
 
 #endif // MATRIX4XM128F_H_

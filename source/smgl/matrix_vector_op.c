@@ -40,15 +40,7 @@ void mat4_lookat(mat4_t *out, fvec3 const *pos, fvec3 const *target, fvec3 const
 }
 
 
-void mat4_rotate(mat4_t *output, mat4_t const *input, fvec3 const* axis, float angle_rad)
-{
-    mat4_t rotator;
-    quat_set_rotation_mat4(&rotator, axis, angle_rad); // set a rotation matrix described by quaternion of rotation by angle and axis
-    mat4_mul(*output, rotator, *input);
-}
-
-
-void mat4_set_euler_rotation(mat4_t *rotation_matrix, float angle, fvec3 *unit_vector) // note angle in radians
+void mat4_set_euler_rotation(mat4_t *rotation_matrix, float angle, fvec3 *unit_vector) // purely for testing
 {
     SMGL_ASSERT(unit_vector->size == 3);
 
