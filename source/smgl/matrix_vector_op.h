@@ -27,5 +27,4 @@ static inline void mat4_vec_product(fvec4 *output, mat4_t const *mat, fvec4 cons
     output->data.sse_register = mat4xm128_vec4_product(mat->sse_registers, vec->data.sse_register);
 }
 
-
 #endif // SMATH_MATRIX_VECTOR_OP_H_
