@@ -10,7 +10,14 @@ extern void mat4_set_euler_rotation(mat4_t *rotation_matrix, float angle, fvec3 
 
 static inline void mat4_rotate(mat4_t *out, mat4_t const *input, fvec3 const* axis, float angle_rad)
 {
+    SMGL_ASSERT(vec->size == 3);
     mat4xm128_rotate(input->sse_registers, axis->data.sse_register, angle_rad, out->sse_registers);
+}
+
+static inline void mat4_translate(mat4_t *output, mat4_t const *input, fvec3 const *vec)
+{
+    SMGL_ASSERT(vec->size == 3);
+    mat4xm128_translate(input->sse_registers, vec->data.sse_register, output->sse_registers);
 }
 
 static inline void vec4_outer_product(mat4_t *output, fvec3 const *input0,  fvec3 const *input1)
@@ -26,5 +33,6 @@ static inline void mat4_vec_product(fvec4 *output, mat4_t const *mat, fvec4 cons
     output->size = vec->size;
     output->data.sse_register = mat4xm128_vec4_product(mat->sse_registers, vec->data.sse_register);
 }
+
 
 #endif // SMATH_MATRIX_VECTOR_OP_H_
