@@ -25,7 +25,7 @@ static void sm_update_camera_vectors(sm_camera_t *self)
 
 sm_camera_t *sm_cam_create(fvec_t position, fvec_t up, float yaw, float pitch)
 {
-    SMGL_ASSERT(position.size == 3 && up.size == 3); // FIXME: 0 magnitude up will lead to normalization error, consider catching this.
+    SMGL_ASSERT(position.size == 3 && up.size == 3);
     sm_camera_t *self = malloc(sizeof(sm_camera_t));
     if(!self) return 0;
 
@@ -46,7 +46,7 @@ sm_camera_t *sm_cam_create(fvec_t position, fvec_t up, float yaw, float pitch)
 
 void sm_cam_process_keyboard(sm_camera_t *self, enum SmCameraDirection direction, float delta_time)
 {
-    float velocity = self->movement_speed * delta_time; // displacement ?
+    float velocity = self->movement_speed * delta_time;
     fvec_t intermediate;
 
     switch(direction)

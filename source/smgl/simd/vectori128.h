@@ -2,7 +2,6 @@
 #define VECTORI128_H_
 #include <stdint.h>
 #include "..\..\..\include/platform.h"
-#include <smmintrin.h>
 
 
 #define SMM_STOREU_SI32(mem_addr, vector)         \
@@ -48,7 +47,7 @@ static inline __m128i vectori128_cross(__m128i input0, __m128i input1)
 */
 
 
-static inline __m128i vectori128_sum(__m128i input)
+static inline __m128i vectori128_sum(__m128i input)  // defeats the purpose of SIMD (sorry !)
 {
     input = _mm_hadd_epi32(input, input); // two horizontal adds places (x + y + z + w) in all values
     input = _mm_hadd_epi32(input, input);
@@ -67,7 +66,8 @@ static inline __m128i vectori128_min(__m128i v)
 static inline int32_t vectori128_dot(__m128i input0, __m128i input1)
 {
     int32_t out;
-    __m128i product = v_mul_i32(input0, input1);
+    __m128i product = v_mul_i32(input0, input1);   /* TODO: consider replace horizontal sum with shuff/add (even
+                                                    * if stated latency/throughput is the same) */
     SMM_STOREU_SI32(&out, vectori128_sum(product));
 
     return out;

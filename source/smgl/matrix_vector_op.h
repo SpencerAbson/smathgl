@@ -10,7 +10,7 @@ extern void mat4_set_euler_rotation(mat4_t *rotation_matrix, float angle, fvec3 
 
 static inline void mat4_rotate(mat4_t *out, mat4_t const *input, fvec3 const* axis, float angle_rad)
 {
-    SMGL_ASSERT(vec->size == 3);
+    SMGL_ASSERT(axis->size == 3);
     mat4xm128_rotate(input->sse_registers, axis->data.sse_register, angle_rad, out->sse_registers);
 }
 

@@ -1,6 +1,5 @@
 #ifndef VECTORF128_H_
 #define VECTORF128_H_
-#include <pmmintrin.h>
 #include <math.h>
 #include "..\..\..\include/platform.h"
 
@@ -123,6 +122,7 @@ static inline __m128 vectorf128_vector_dot(__m128 const input0, __m128 const inp
 static inline __m128 vectorf128_normalize(__m128 const input)
 {
     __m128 dot = vectorf128_vector_dot(input, input);
+    SMGL_ASSERT(_mm_cvtss_f32(dot) > 0.0f);  // 0 division err
     __m128 isr = _mm_rsqrt_ps(dot);
      return _mm_mul_ps(input, isr);
 }

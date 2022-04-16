@@ -40,7 +40,7 @@ void mat4_lookat(mat4_t *out, fvec3 const *pos, fvec3 const *target, fvec3 const
 }
 
 
-void mat4_set_euler_rotation(mat4_t *rotation_matrix, float angle, fvec3 *unit_vector) // purely for testing
+void mat4_set_euler_rotation(mat4_t *rotation_matrix, float angle, fvec3 *unit_vector) // purely for testing against actual SSE 3-7 implemetations
 {
     SMGL_ASSERT(unit_vector->size == 3);
 

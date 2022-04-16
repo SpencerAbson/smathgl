@@ -34,7 +34,8 @@ void ivec_cross(ivec_t vout, ivec_t v0, ivec_t v1);
 void ivec_reverse(ivec_t vout, ivec_t v0);
 int32_t ivec_dot(ivec_t v0, ivec_t v1);
 
-/* Vector initers and primitive function macro implementations */
+
+/* Vector initers and function macro implementations */
 #define ivec4_init(vec_out, x, y, z, w)      \
     (vec_out).size = 4;                      \
     (vec_out).data.sse_register = _mm_set_epi32((w), (z), (y), (x));
